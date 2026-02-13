@@ -14,7 +14,6 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className="antialiased">
-                <h1 className="text-2xl font-bold uppercase tracking-widest font-serif">ResiDate</h1>
                 {children}
             </body>
         </html>

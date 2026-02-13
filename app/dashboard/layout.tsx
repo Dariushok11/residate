@@ -23,7 +23,7 @@ export default function DashboardLayout({
             {/* Sidebar - "The Ledger" Style */}
             <aside className="hidden w-64 flex-col border-r bg-navy text-white md-flex">
                 <div className="flex px-6 items-center border-b border-white/5 h-20">
-                    <Link href="/" className="text-xl font-serif font-bold tracking-widest text-gold hover:opacity-80 transition-all">ReservaPro</Link>
+                    <Link href="/" className="text-xl font-serif font-bold tracking-widest text-gold hover:opacity-80 transition-all">ResiDate</Link>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">

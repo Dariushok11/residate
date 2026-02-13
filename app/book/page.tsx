@@ -141,7 +141,7 @@ function BookingContent() {
                         >
                             Reset Ledger
                         </button>
-                        <div className="text-[10px] uppercase tracking-widest opacity-30">ReservaPro Platform</div>
+                        <div className="text-[10px] uppercase tracking-widest opacity-30">ResiDate Platform</div>
                     </div>
                 </div>
 

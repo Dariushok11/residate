@@ -55,7 +55,7 @@ export default function JournalPage() {
 
                     <div className="mt-16 pt-8 border-t border-navy/10 flex justify-center">
                         <div className="text-center space-y-4">
-                            <p className="text-sm uppercase tracking-widest opacity-50">Words by ReservaPro</p>
+                            <p className="text-sm uppercase tracking-widest opacity-50">Words by ResiDate</p>
                             <div className="h-px w-16 bg-gold mx-auto"></div>
                         </div>
                     </div>

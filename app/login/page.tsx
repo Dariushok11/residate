@@ -38,7 +38,7 @@ export default function LoginPage() {
                         <X className="h-6 w-6" />
                     </Link>
                     <div className="space-y-4">
-                        <h1 className="text-3xl font-serif text-gold tracking-widest uppercase">ReservaPro</h1>
+                        <h1 className="text-3xl font-serif text-gold tracking-widest uppercase">ResiDate</h1>
                         <p className="text-white/60 text-sm uppercase tracking-widest">Client Portal</p>
                     </div>
                 </div>

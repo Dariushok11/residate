@@ -26,7 +26,7 @@ export function MobileNav() {
             {mounted && open && createPortal(
                 <div className="fixed inset-0 z-[99999] bg-white text-navy animate-in slide-in-from-left-full duration-300 flex flex-col antialiased" style={{ opacity: 1 }}>
                     <div className="flex justify-between items-center p-4 border-b border-navy/10 bg-white">
-                        <span className="text-xl font-serif uppercase tracking-widest pl-2 text-navy">ReservaPro</span>
+                        <span className="text-xl font-serif uppercase tracking-widest pl-2 text-navy">ResiDate</span>
                         <Button variant="ghost" size="sm" onClick={() => setOpen(false)} className="text-navy hover:bg-navy/10 rounded-full h-10 w-10 p-0">
                             <X className="h-6 w-6" />
                         </Button>

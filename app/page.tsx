@@ -156,8 +156,8 @@ export default function Home() {
 
             <footer className="border-t border-[var(--border-subtle)] py-12 md:py-24 bg-[var(--bg-primary)]">
                 <div className="container px-4 md-px-6 flex flex-col md-flex-row justify-between items-center gap-8 md-gap-0">
-                    <div className="text-2xl font-serif uppercase tracking-widest">ReservaPro</div>
-                    <p className="text-sm text-[var(--text-secondary)]">© 2026 ReservaPro. All rights reserved.</p>
+                    <div className="text-2xl font-serif uppercase tracking-widest">ResiDate</div>
+                    <p className="text-sm text-[var(--text-secondary)]">© 2026 ResiDate. All rights reserved.</p>
                 </div>
             </footer>
         </div>

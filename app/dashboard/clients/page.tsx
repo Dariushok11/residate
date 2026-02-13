@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Search, UserPlus, Mail, MoreHorizontal } from "lucide-react";
 
-const INVITE_SUBJECT = "Invitation to ReservaPro Sanctuary";
+const INVITE_SUBJECT = "Invitation to ResiDate Sanctuary";
 const INVITE_BODY = "Greetings,\n\nYou are cordially invited to experience our sanctuary. Please visit our registry to curate your next stay.\n\nWarm regards,";
 
 import { useBookingStore } from "@/lib/store";

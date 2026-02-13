@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "ReservaPro | Timeless Experiences",
+    title: "ResiDate | Timeless Experiences",
     description: "The premium platform for managing your time and appointments.",
 };
 
@@ -13,7 +13,10 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className="antialiased">{children}</body>
+            <body className="antialiased">
+                <h1 className="text-2xl font-bold uppercase tracking-widest font-serif">ResiDate</h1>
+                {children}
+            </body>
         </html>
     );
 }

@@ -28,8 +28,16 @@ export function BusinessCalendar() {
     const [isGCalConnected, setIsGCalConnected] = React.useState(false);
     const [isSyncing, setIsSyncing] = React.useState(false);
 
-    // Obtener el ID del negocio actual (usamos el primero o uno por defecto)
-    const currentBusinessId = businesses.length > 0 ? businesses[0].id : "default-business";
+    const [currentBusinessId, setCurrentBusinessId] = React.useState<string>("default-business");
+
+    React.useEffect(() => {
+        const savedName = localStorage.getItem('registered_business_name');
+        if (savedName) {
+            setCurrentBusinessId(savedName.toLowerCase().replace(/\s+/g, '-'));
+        } else if (businesses.length > 0) {
+            setCurrentBusinessId(businesses[0].id);
+        }
+    }, [businesses]);
 
     React.useEffect(() => {
         setIsClient(true);

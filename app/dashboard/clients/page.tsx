@@ -7,18 +7,25 @@ const INVITE_SUBJECT = "Invitation to ResiDate Sanctuary";
 const INVITE_BODY = "Greetings,\n\nYou are cordially invited to experience our sanctuary. Please visit our registry to curate your next stay.\n\nWarm regards,";
 
 import { useBookingStore } from "@/lib/store";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ClientsPage() {
     const { slots, toggleVIP, removeClient } = useBookingStore();
     const [isInviteOpen, setIsInviteOpen] = useState(false);
     const [inviteEmail, setInviteEmail] = useState("");
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const [businessId, setBusinessId] = useState<string | null>(null);
 
-    // Filter slots to get unique clients who have "booked" (which we treat as paid/confirmed)
-    // Filter slots to get unique clients who have "booked"
+    useEffect(() => {
+        const savedName = localStorage.getItem('registered_business_name');
+        if (savedName) {
+            setBusinessId(savedName.toLowerCase().replace(/\s+/g, '-'));
+        }
+    }, []);
+
+    // Filter slots to get unique clients who have "booked" and belong to this business
     const clients = slots
-        .filter(s => s.status === "booked" && s.clientEmail)
+        .filter(s => s.status === "booked" && s.clientEmail && s.businessId === businessId)
         .reduce((acc: any[], curr) => {
             const existing = acc.find(c => c.email === curr.clientEmail);
             const now = new Date();

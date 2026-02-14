@@ -35,7 +35,7 @@ export default function SettingsPage() {
     const [hasChanges, setHasChanges] = useState(false);
     const [apiKey, setApiKey] = useState<string>("");
     const { slots } = useBookingStore();
-    const { businesses } = useBusinessStore();
+    const { businesses, deleteEntireBusiness } = useBusinessStore();
 
     useEffect(() => {
         const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
@@ -105,6 +105,30 @@ export default function SettingsPage() {
                 alert("Your registry has been deactivated. Redirecting to home...");
                 router.push("/");
             }
+        }
+    };
+
+    const handleDeletePermanently = async () => {
+        const bId = localStorage.getItem('registered_business_id');
+        if (!bId) return;
+
+        const business = businesses.find(b => b.id === bId);
+        if (!business) return;
+
+        const confirmText = `eliminar ${business.name.toLowerCase()}`;
+        const userInput = prompt(`⚠️ ATENCIÓN: Esta acción eliminará el negocio "${business.name}" y TODAS sus reservas para siempre.\n\nNadie podrá volver a verlo y los datos no se podrán recuperar.\n\nPara confirmar, escribe exactamente: ${confirmText}`);
+
+        if (userInput === confirmText) {
+            const result = await deleteEntireBusiness(bId);
+            if ('success' in result) {
+                localStorage.clear();
+                alert("🚀 El negocio y todos sus datos han sido eliminados permanentemente.");
+                router.push("/");
+            } else {
+                alert("Error al eliminar: " + result.error);
+            }
+        } else if (userInput !== null) {
+            alert("❌ Confirmación incorrecta. El negocio no ha sido eliminado.");
         }
     };
 
@@ -281,14 +305,23 @@ export default function SettingsPage() {
                     <h1 className="text-3xl font-serif text-navy">Registry Settings</h1>
                     <p className="text-slate italic">Calibrate your personal sanctuary experience.</p>
                 </div>
-                <Button
-                    onClick={handleSave}
-                    disabled={!hasChanges}
-                    className={`flex items-center gap-2 ${!hasChanges ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                    <Save className="h-4 w-4" />
-                    {hasChanges ? 'Save Changes' : 'No Changes'}
-                </Button>
+                <div className="flex gap-3">
+                    <Button
+                        onClick={handleDeletePermanently}
+                        variant="ghost"
+                        className="text-red-500 hover:bg-red-50 hover:text-red-600 border border-red-200"
+                    >
+                        Delete Business
+                    </Button>
+                    <Button
+                        onClick={handleSave}
+                        disabled={!hasChanges}
+                        className={`flex items-center gap-2 ${!hasChanges ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                        <Save className="h-4 w-4" />
+                        {hasChanges ? 'Save Changes' : 'No Changes'}
+                    </Button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg-grid-cols-4 gap-8">

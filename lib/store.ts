@@ -238,6 +238,32 @@ export function useBusinessStore() {
         if (error) console.error("Error removing business:", error);
     }, []);
 
+    const deleteEntireBusiness = useCallback(async (id: string) => {
+        // 1. Delete all bookings associated with this business
+        const { error: bookingsError } = await supabase
+            .from('bookings')
+            .delete()
+            .eq('business_id', id);
+
+        if (bookingsError) {
+            console.error("Error deleting business bookings:", bookingsError);
+            return { error: bookingsError.message };
+        }
+
+        // 2. Delete the business itself
+        const { error: businessError } = await supabase
+            .from('businesses')
+            .delete()
+            .eq('id', id);
+
+        if (businessError) {
+            console.error("Error deleting business:", businessError);
+            return { error: businessError.message };
+        }
+
+        return { success: true };
+    }, []);
+
     const resetBusinesses = useCallback(() => {
         console.warn("Reset businesses disabled for safety");
     }, []);
@@ -247,6 +273,7 @@ export function useBusinessStore() {
         isHydrated,
         addBusiness,
         removeBusiness,
+        deleteEntireBusiness,
         resetBusinesses
     };
 }

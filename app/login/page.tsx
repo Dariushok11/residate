@@ -11,6 +11,7 @@ export default function LoginPage() {
     const [password, setPassword] = React.useState("");
 
     const handleForgotKey = async (e: React.MouseEvent) => {
+        // Envio de correo real via Resend API
         e.preventDefault();
         if (!email) {
             alert("Por favor, introduce tu correo electrónico primero.");

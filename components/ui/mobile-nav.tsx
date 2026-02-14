@@ -49,7 +49,7 @@ export function MobileNav() {
                                 </Link>
                                 <Link href="/book" onClick={() => setOpen(false)} className="w-full">
                                     <Button className="w-full bg-navy hover:bg-navy/90 text-white h-12 uppercase tracking-wider text-sm font-bold">
-                                        Book Your Registry
+                                        Book Now
                                     </Button>
                                 </Link>
                             </div>

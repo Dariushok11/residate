@@ -91,7 +91,7 @@ export default function Home() {
                             </div>
 
                             {/* Search Bar */}
-                            <div className="relative w-full md-w-[648px] group mx-auto">
+                            <div className="relative w-full md-max-w-600 group mx-auto">
                                 <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-6 w-6 text-navy opacity-40 group-focus-within:opacity-100 transition-opacity" />
                                 <input
                                     type="text"

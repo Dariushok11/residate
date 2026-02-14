@@ -360,7 +360,7 @@ export function BusinessCalendar() {
                             key={idx}
                             onClick={() => setMobileDayIndex(idx)}
                             className={cn(
-                                "flex-1 min-w-[80px] py-4 flex flex-col items-center justify-center border-r border-navy/5 transition-all",
+                                "flex-1 min-w-80 py-4 flex flex-col items-center justify-center border-r border-navy/5 transition-all",
                                 mobileDayIndex === idx ? "bg-navy text-white" : "text-navy hover:bg-navy/5"
                             )}
                         >
@@ -391,7 +391,7 @@ export function BusinessCalendar() {
                             <div
                                 key={index}
                                 className={cn(
-                                    "col-span-1 min-w-0 md-min-w-[100px]",
+                                    "col-span-1 min-w-0 md-min-w-100",
                                     isToday ? 'bg-navy/5' : '',
                                     mobileDayIndex !== index && "hidden md-block"
                                 )}

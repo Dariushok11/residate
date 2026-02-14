@@ -917,6 +917,10 @@ img {
     scrollbar-width: none;
 }
 
+.min-w-80 {
+    min-width: 80px;
+}
+
 /* Responsive */
 .hidden {
     display: none;
@@ -988,6 +992,22 @@ img {
 
     .md-rounded-xl {
         border-radius: 0.75rem;
+    }
+
+    .md-block {
+        display: block;
+    }
+
+    .md-grid-cols-8 {
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+
+    .md-min-w-100 {
+        min-width: 100px;
+    }
+
+    .md-max-w-600 {
+        max-width: 600px;
     }
 }
 

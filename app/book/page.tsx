@@ -290,14 +290,10 @@ function BookingContent() {
                                     <span className="text-sm text-slate uppercase tracking-widest">Service Fee</span>
                                     <span className="font-medium text-navy text-lg">${currentService?.price || 0}.00</span>
                                 </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-slate uppercase tracking-widest">Processing & Tax</span>
-                                    <span className="font-medium text-navy text-lg">${Math.round((currentService?.price || 0) * 0.08)}.00</span>
-                                </div>
                                 <div className="h-px bg-navy/10"></div>
                                 <div className="flex justify-between items-center">
                                     <span className="text-xl font-serif text-navy">Total Value</span>
-                                    <span className="text-2xl font-bold text-gold">${(currentService?.price || 0) + Math.round((currentService?.price || 0) * 0.08)}.00</span>
+                                    <span className="text-2xl font-bold text-gold">${currentService?.price || 0}.00</span>
                                 </div>
                             </div>
 

@@ -42,7 +42,7 @@ export default function DestinationsPage() {
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-navy opacity-40 group-focus-within:opacity-100 transition-opacity z-10" />
                         <input
                             type="text"
-                            placeholder="SEARCH SANCTUARIES..."
+                            placeholder="Buscar Negocios"
                             className="w-full bg-white text-navy py-5 pl-16 pr-6 text-lg md:text-xl tracking-widest focus:outline-none transition-all font-light placeholder:text-navy/30 uppercase border-none shadow-2xl"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}

@@ -95,7 +95,7 @@ export default function Home() {
                                 <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-6 w-6 text-navy opacity-40 group-focus-within:opacity-100 transition-opacity" />
                                 <input
                                     type="text"
-                                    placeholder="Search sanctuaries..."
+                                    placeholder="Buscar Negocios"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     className="w-full bg-[var(--bg-secondary)] border border-navy py-6 pl-18 pr-6 text-2xl tracking-widest focus:outline-none transition-all font-light placeholder:opacity-20 uppercase"

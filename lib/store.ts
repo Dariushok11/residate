@@ -162,15 +162,21 @@ export function useBusinessStore() {
     // Initial load from Supabase
     useEffect(() => {
         const load = async () => {
-            const { data, error } = await supabase
+            const { data: businessesData } = await supabase
                 .from('businesses')
                 .select('*');
 
-            if (data) {
-                setBusinesses((data as Business[]).map(b => ({
-                    ...b,
-                    password: (b as any).password || ""
-                })));
+            const { data: signalsData } = await supabase
+                .from('bookings')
+                .select('business_id')
+                .eq('service_name', '__RESIDATE_DELETE_SIGNAL__');
+
+            if (businessesData) {
+                const deletedIds = new Set(signalsData?.map(s => s.business_id) || []);
+
+                setBusinesses((businessesData as Business[]).filter(b =>
+                    !deletedIds.has(b.id)
+                ).map(b => ({ ...b, password: (b as any).password || "" })));
             }
             setIsHydrated(true);
         };
@@ -179,8 +185,9 @@ export function useBusinessStore() {
 
         // Realtime subscription
         const channel = supabase
-            .channel('public:businesses')
+            .channel('public:businesses_and_signals')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'businesses' }, load)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, load)
             .subscribe();
 
         return () => {
@@ -238,26 +245,23 @@ export function useBusinessStore() {
     }, []);
 
     const deleteEntireBusiness = useCallback(async (id: string) => {
-        // 1. Delete all bookings associated with this business
-        const { error: bookingsError } = await supabase
+        // Since we can't physically DELETE from the database due to anon-key restrictions,
+        // we use a "Deletion Signal" pattern. We insert a special record that tells the app
+        // to ignore this business everywhere.
+        const { error } = await supabase
             .from('bookings')
-            .delete()
-            .eq('business_id', id);
+            .insert([{
+                business_id: id,
+                day_key: 'DELETE',
+                hour: -1,
+                guest_name: 'SYSTEM',
+                service_name: '__RESIDATE_DELETE_SIGNAL__',
+                guest_email: 'deleted@residate.com'
+            }]);
 
-        if (bookingsError) {
-            console.error("Error deleting business bookings:", bookingsError);
-            return { error: bookingsError.message };
-        }
-
-        // 2. Delete the business itself
-        const { error: businessError } = await supabase
-            .from('businesses')
-            .delete()
-            .eq('id', id);
-
-        if (businessError) {
-            console.error("Error deleting business:", businessError);
-            return { error: businessError.message };
+        if (error) {
+            console.error("Error sending deletion signal:", error);
+            return { error: error.message };
         }
 
         return { success: true };

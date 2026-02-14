@@ -165,6 +165,17 @@ export function useBusinessStore() {
     }, []);
 
     const addBusiness = useCallback(async (newBusiness: Omit<Business, 'id' | 'isCustom'>) => {
+        // First check if email already exists
+        const { data: existing } = await supabase
+            .from('businesses')
+            .select('id')
+            .eq('email', newBusiness.email)
+            .single();
+
+        if (existing) {
+            return { error: "Este email ya está registrado con otro negocio. Por favor, usa una cuenta diferente." };
+        }
+
         const id = newBusiness.name.toLowerCase().replace(/\s+/g, '-');
 
         const { error } = await supabase

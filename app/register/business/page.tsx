@@ -38,7 +38,7 @@ export default function BusinessRegistrationPage() {
 
             if (result && 'error' in result && result.error) {
                 setError(result.error);
-                setStep(2); // Go back to where email is shown
+                setStep(1); // Go back to where email is shown
                 return;
             }
 
@@ -136,6 +136,11 @@ export default function BusinessRegistrationPage() {
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     />
                                 </div>
+                                {error && (
+                                    <div className="p-4 bg-red-50 text-red-600 text-sm border-l-4 border-red-600 animate-in fade-in slide-in-from-top-1">
+                                        {error}
+                                    </div>
+                                )}
                                 <Button size="lg" className="w-full btn-hero mt-8">Continue Onboarding</Button>
                             </form>
                         </div>

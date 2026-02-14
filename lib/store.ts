@@ -1,6 +1,5 @@
-"use client";
-
 import { useState, useEffect, useCallback } from 'react';
+import { supabase } from './supabase';
 
 // Types
 export type SlotStatus = "available" | "booked" | "blocked" | "pending";
@@ -45,173 +44,82 @@ export function useBookingStore() {
     const [slots, setSlots] = useState<BookingSlot[]>([]);
     const [isHydrated, setIsHydrated] = useState(false);
 
-    // Simplified hydration to prevent stuck loading screens
+    // Load from Supabase
     useEffect(() => {
-        setIsHydrated(true);
-        if (typeof window === 'undefined') return;
+        const load = async () => {
+            const { data, error } = await supabase
+                .from('bookings')
+                .select('*');
 
-        const load = () => {
-            try {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                if (stored) {
-                    const parsed = JSON.parse(stored);
-                    // Filter out any legacy data without businessId to prevent "ghost" bookings
-                    const cleaned = parsed.filter((s: any) => s.businessId);
-                    setSlots(cleaned.length > 0 ? cleaned : INITIAL_SLOTS);
-                    if (cleaned.length === 0) {
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_SLOTS));
-                    }
-                } else {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_SLOTS));
-                    setSlots(INITIAL_SLOTS);
-                }
-            } catch (e) {
-                console.error("Store error:", e);
-                setSlots(INITIAL_SLOTS);
+            if (data) {
+                const mapped: BookingSlot[] = data.map(b => ({
+                    id: b.id,
+                    businessId: b.business_id,
+                    day: b.day_key,
+                    hour: b.hour,
+                    status: 'booked', // Simplified for prototype
+                    clientName: b.guest_name,
+                    clientEmail: b.guest_email,
+                    service: b.service_name,
+                    timestamp: new Date(b.created_at).getTime()
+                }));
+                setSlots(mapped);
             }
+            setIsHydrated(true);
         };
 
         load();
 
-        // Listen for storage events (cross-tab sync)
-        const storageHandler = (e: StorageEvent) => {
-            if (e.key === STORAGE_KEY && e.newValue) {
-                try {
-                    const parsed = JSON.parse(e.newValue);
-                    setSlots(parsed);
-                } catch (err) { }
-            }
-        };
-
-        // Listen for custom events (same-tab sync)
-        const customHandler = ((e: CustomEvent) => {
-            if (e.detail?.key === STORAGE_KEY && e.detail?.value) {
-                try {
-                    setSlots(e.detail.value);
-                } catch (err) { }
-            }
-        }) as EventListener;
-
-        window.addEventListener('storage', storageHandler);
-        window.addEventListener('localStorageUpdate', customHandler);
+        // Realtime subscription
+        const channel = supabase
+            .channel('public:bookings')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, load)
+            .subscribe();
 
         return () => {
-            window.removeEventListener('storage', storageHandler);
-            window.removeEventListener('localStorageUpdate', customHandler);
+            supabase.removeChannel(channel);
         };
-    }, []);
-
-    const save = useCallback((newSlots: BookingSlot[]) => {
-        setSlots(newSlots);
-        if (typeof window !== 'undefined') {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(newSlots));
-                // Dispatch custom event for same-tab sync
-                window.dispatchEvent(new CustomEvent('localStorageUpdate', {
-                    detail: { key: STORAGE_KEY, value: newSlots }
-                }));
-            } catch (e) { }
-        }
-    }, []);
-
-    const toggleBlock = useCallback((businessId: string, day: string, hour: number) => {
-        setSlots(prev => {
-            const next = [...prev];
-            const idx = next.findIndex(s => s.businessId === businessId && s.day === day && s.hour === hour);
-            if (idx >= 0) {
-                next.splice(idx, 1);
-            } else {
-                next.push({
-                    id: Math.random().toString(36).substring(2, 9),
-                    businessId,
-                    day,
-                    hour,
-                    status: "blocked",
-                    timestamp: Date.now()
-                });
-            }
-            // Guardamos asíncronamente para no bloquear el renderizado
-            setTimeout(() => {
-                if (typeof window !== 'undefined') {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-                }
-            }, 0);
-            return next;
-        });
     }, []);
 
     const getSlot = useCallback((businessId: string, day: string, hour: number) => {
         return slots.find(s => s.businessId === businessId && s.day === day && s.hour === hour);
     }, [slots]);
 
-    const addBooking = useCallback((businessId: string, day: string, hour: number, clientName: string, service: string, clientEmail?: string, status: 'booked' | 'blocked' | 'pending' = 'booked') => {
-        setSlots(prev => {
-            const next = [...prev];
-            // Remove existing slot at same time if any (overwrite)
-            const idx = next.findIndex(s => s.businessId === businessId && s.day === day && s.hour === hour);
-            if (idx >= 0) {
-                next.splice(idx, 1);
-            }
+    const addBooking = useCallback(async (businessId: string, day: string, hour: number, clientName: string, service: string, clientEmail?: string) => {
+        const { error } = await supabase
+            .from('bookings')
+            .insert([{
+                business_id: businessId,
+                day_key: day,
+                hour: hour,
+                guest_name: clientName,
+                service_name: service,
+                guest_email: clientEmail
+            }]);
 
-            next.push({
-                id: `${businessId}-${day}-${hour}-${Date.now()}`,
-                businessId,
-                day,
-                hour,
-                status,
-                clientName,
-                clientEmail,
-                service,
-                timestamp: Date.now()
-            });
+        if (error) console.error("Error adding booking:", error);
+    }, []);
 
-            setTimeout(() => {
-                if (typeof window !== 'undefined') {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-                    // Dispatch custom event for same-tab sync
-                    window.dispatchEvent(new CustomEvent('localStorageUpdate', {
-                        detail: { key: STORAGE_KEY, value: next }
-                    }));
-                }
-            }, 0);
-            return next;
-        });
+    const toggleBlock = useCallback((businessId: string, day: string, hour: number) => {
+        // Blocks are not yet fully implemented in Supabase for the prototype
+        console.warn("Toggle block not yet synced with cloud");
     }, []);
 
     const toggleVIP = useCallback((clientEmail: string) => {
-        setSlots(prev => {
-            const next = prev.map(slot => {
-                if (slot.clientEmail === clientEmail) {
-                    return { ...slot, isVIP: !slot.isVIP };
-                }
-                return slot;
-            });
-            setTimeout(() => {
-                if (typeof window !== 'undefined') {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-                }
-            }, 0);
-            return next;
-        });
+        // VIP status not yet fully implemented in Supabase
     }, []);
 
-    const removeClient = useCallback((clientEmail: string) => {
-        setSlots(prev => {
-            const next = prev.filter(slot => slot.clientEmail !== clientEmail);
-            setTimeout(() => {
-                if (typeof window !== 'undefined') {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-                }
-            }, 0);
-            return next;
-        });
+    const removeClient = useCallback(async (clientEmail: string) => {
+        const { error } = await supabase
+            .from('bookings')
+            .delete()
+            .eq('guest_email', clientEmail);
+        if (error) console.error("Error removing client:", error);
     }, []);
 
-    const resetStore = useCallback(() => {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_SLOTS));
-            setSlots(INITIAL_SLOTS);
-        }
+    const resetStore = useCallback(async () => {
+        // Resetting the whole database is protected
+        console.warn("Reset store disabled for safety");
     }, []);
 
     return {
@@ -230,99 +138,62 @@ export function useBusinessStore() {
     const [businesses, setBusinesses] = useState<Business[]>([]);
     const [isHydrated, setIsHydrated] = useState(false);
 
+    // Initial load from Supabase
     useEffect(() => {
-        setIsHydrated(true);
-        if (typeof window === 'undefined') return;
+        const load = async () => {
+            const { data, error } = await supabase
+                .from('businesses')
+                .select('*');
 
-        const load = () => {
-            try {
-                const stored = localStorage.getItem(BUSINESS_STORAGE_KEY);
-                if (stored) {
-                    const parsed = JSON.parse(stored);
-                    setBusinesses(parsed);
-                }
-            } catch (e) {
-                console.error("Business store error:", e);
+            if (data) {
+                setBusinesses(data as Business[]);
             }
+            setIsHydrated(true);
         };
 
         load();
 
-        // Listen for storage events (cross-tab sync)
-        const storageHandler = (e: StorageEvent) => {
-            if (e.key === BUSINESS_STORAGE_KEY && e.newValue) {
-                try {
-                    const parsed = JSON.parse(e.newValue);
-                    setBusinesses(parsed);
-                } catch (err) { }
-            }
-        };
-
-        // Listen for custom events (same-tab sync)
-        const customHandler = ((e: CustomEvent) => {
-            if (e.detail?.key === BUSINESS_STORAGE_KEY && e.detail?.value) {
-                try {
-                    setBusinesses(e.detail.value);
-                } catch (err) { }
-            }
-        }) as EventListener;
-
-        window.addEventListener('storage', storageHandler);
-        window.addEventListener('localStorageUpdate', customHandler);
+        // Realtime subscription
+        const channel = supabase
+            .channel('public:businesses')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'businesses' }, load)
+            .subscribe();
 
         return () => {
-            window.removeEventListener('storage', storageHandler);
-            window.removeEventListener('localStorageUpdate', customHandler);
+            supabase.removeChannel(channel);
         };
     }, []);
 
-    const addBusiness = useCallback((newBusiness: Omit<Business, 'id' | 'isCustom'>) => {
-        // Check if email already exists
-        const exists = businesses.some(b => b.email && b.email.toLowerCase() === newBusiness.email.toLowerCase());
-        if (exists) {
-            return { error: "This email is already associated with a sanctuary." };
+    const addBusiness = useCallback(async (newBusiness: Omit<Business, 'id' | 'isCustom'>) => {
+        const id = newBusiness.name.toLowerCase().replace(/\s+/g, '-');
+
+        const { error } = await supabase
+            .from('businesses')
+            .insert([{
+                id,
+                ...newBusiness,
+                isCustom: true
+            }]);
+
+        if (error) {
+            console.error("Error adding business:", error);
+            return { error: error.message };
         }
 
-        const business: Business = {
-            ...newBusiness,
-            id: newBusiness.name.toLowerCase().replace(/\s+/g, '-'),
-            isCustom: true
-        };
+        return { id };
+    }, []);
 
-        setBusinesses(prev => {
-            const next = [...prev, business];
-            if (typeof window !== 'undefined') {
-                localStorage.setItem(BUSINESS_STORAGE_KEY, JSON.stringify(next));
-                // Dispatch custom event for same-tab sync
-                window.dispatchEvent(new CustomEvent('localStorageUpdate', {
-                    detail: { key: BUSINESS_STORAGE_KEY, value: next }
-                }));
-            }
-            return next;
-        });
+    const removeBusiness = useCallback(async (id: string) => {
+        const { error } = await supabase
+            .from('businesses')
+            .delete()
+            .eq('id', id);
 
-        return { id: business.id };
-    }, [businesses]);
-
-    const removeBusiness = useCallback((id: string) => {
-        setBusinesses(prev => {
-            const next = prev.filter(b => b.id !== id);
-            if (typeof window !== 'undefined') {
-                localStorage.setItem(BUSINESS_STORAGE_KEY, JSON.stringify(next));
-                // Dispatch custom event for same-tab sync
-                window.dispatchEvent(new CustomEvent('localStorageUpdate', {
-                    detail: { key: BUSINESS_STORAGE_KEY, value: next }
-                }));
-            }
-            return next;
-        });
+        if (error) console.error("Error removing business:", error);
     }, []);
 
     const resetBusinesses = useCallback(() => {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem(BUSINESS_STORAGE_KEY, JSON.stringify([]));
-            setBusinesses([]);
-        }
+        console.warn("Reset businesses disabled for safety");
     }, []);
 
     return {
@@ -333,3 +204,4 @@ export function useBusinessStore() {
         resetBusinesses
     };
 }
+

@@ -92,11 +92,11 @@ function BookingContent() {
     // if (!isHydrated) return <div className="min-h-screen flex items-center justify-center font-serif">Loading Ledger...</div>;
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-cream p-4">
-            <div className="w-full max-w-2xl bg-white shadow-2xl border flex flex-col md-flex-row h-600 overflow-hidden">
+        <div className="flex min-h-screen items-center justify-center bg-cream p-0 md-p-4">
+            <div className="w-full max-w-2xl bg-white shadow-2xl border flex flex-col md-flex-row h-screen md-h-600 overflow-hidden md-rounded-xl">
 
                 {/* Summary Sidebar */}
-                <div className="w-full md-w-1-3 bg-navy p-8 text-white flex flex-col justify-between">
+                <div className="w-full md-w-1-3 bg-navy p-6 md-p-8 text-white flex flex-col justify-between shrink-0">
                     <div className="space-y-8">
                         <div>
                             <h2 className="text-2xl font-serif text-white mb-2">Your Booking</h2>
@@ -142,7 +142,7 @@ function BookingContent() {
                 </div>
 
                 {/* Interaction Area */}
-                <div className="flex-1 p-8 md-p-12 relative overflow-y-auto">
+                <div className="flex-1 p-6 md-p-12 relative overflow-y-auto">
                     {/* Botón Cerrar */}
                     <button
                         onClick={() => window.history.back()}

@@ -24,6 +24,7 @@ export function BusinessCalendar() {
     const [blockReason, setBlockReason] = React.useState("Personal Commitment");
     const [icalUrlInput, setIcalUrlInput] = React.useState(""); // Estado para el input de URL
     const [selectedSlot, setSelectedSlot] = React.useState<{ day: string, hour: number } | null>(null);
+    const [mobileDayIndex, setMobileDayIndex] = React.useState(0);
     const [isGCalConnected, setIsGCalConnected] = React.useState(false);
     const [isSyncing, setIsSyncing] = React.useState(false);
 
@@ -352,11 +353,28 @@ export function BusinessCalendar() {
                     </div>
                 </div>
 
+                {/* Mobile Day Selector */}
+                <div className="flex bg-cream border-b md-hidden overflow-x-auto no-scrollbar">
+                    {weekDays.map((day, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => setMobileDayIndex(idx)}
+                            className={cn(
+                                "flex-1 min-w-[80px] py-4 flex flex-col items-center justify-center border-r border-navy/5 transition-all",
+                                mobileDayIndex === idx ? "bg-navy text-white" : "text-navy hover:bg-navy/5"
+                            )}
+                        >
+                            <span className="uppercase tracking-widest text-[9px] font-bold opacity-60">{day.name}</span>
+                            <span className="text-lg font-serif">{day.date}</span>
+                        </button>
+                    ))}
+                </div>
+
                 {/* Calendar Grid */}
-                <div className="grid grid-cols-8 divide-x overflow-x-auto">
+                <div className="grid grid-cols-2 md-grid-cols-8 divide-x overflow-x-hidden">
                     {/* Time Column */}
-                    <div className="col-span-1 bg-cream min-w-[60px]">
-                        <div className="h-14 border-b"></div>
+                    <div className="col-span-1 bg-cream border-r">
+                        <div className="h-14 border-b flex items-center justify-center text-[10px] uppercase tracking-widest opacity-40 font-bold">GMT</div>
                         {HOURS.map(hour => (
                             <div key={hour} className="h-24 flex items-center justify-center text-xs opacity-60 font-medium font-serif border-b border-dashed text-navy">
                                 {hour > 12 ? `${hour - 12} PM` : `${hour} AM`}
@@ -364,14 +382,24 @@ export function BusinessCalendar() {
                         ))}
                     </div>
 
-                    {/* Days Columns Dinámicos */}
+                    {/* Days Columns */}
                     {weekDays.map((day, index) => {
                         // Verificar si es el día actual para resaltarlo
                         const isToday = day.date === now.getDate() && day.fullDate.getMonth() === now.getMonth() && day.fullDate.getFullYear() === now.getFullYear();
 
                         return (
-                            <div key={index} className={`col-span-1 min-w-[100px] ${isToday ? 'bg-navy/5' : ''}`}>
-                                <div className={`h-14 flex flex-col items-center justify-center border-b font-serif text-navy ${isToday ? 'bg-navy text-white' : 'bg-cream'}`}>
+                            <div
+                                key={index}
+                                className={cn(
+                                    "col-span-1 min-w-0 md-min-w-[100px]",
+                                    isToday ? 'bg-navy/5' : '',
+                                    mobileDayIndex !== index && "hidden md-block"
+                                )}
+                            >
+                                <div className={cn(
+                                    "h-14 flex flex-col items-center justify-center border-b font-serif text-navy hidden md-flex",
+                                    isToday ? 'bg-navy text-white' : 'bg-cream'
+                                )}>
                                     <span className="uppercase tracking-wider text-[10px] font-bold">{day.name}</span>
                                     <span className="text-lg leading-none">{day.date}</span>
                                 </div>

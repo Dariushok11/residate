@@ -28,6 +28,10 @@ export default function Home() {
         );
     }, [businesses, searchTerm]);
 
+    const stripPassword = (desc: string) => {
+        return desc.replace(/\[PWD:.*?\]/g, '').trim();
+    };
+
     return (
         <div className="flex flex-col min-h-screen">
             {/* Header / Navigation */}
@@ -119,7 +123,7 @@ export default function Home() {
                                         <div className="space-y-1 text-center">
                                             <h4 className="text-xl font-serif text-navy">{business.name}</h4>
                                             <p className="text-[10px] text-gold uppercase tracking-[0.2em] font-medium">{business.category} • {business.location}</p>
-                                            <p className="text-sm text-slate font-light italic opacity-70 mt-3 line-clamp-2 max-w-[280px] mx-auto px-4 leading-relaxed">"{business.description}"</p>
+                                            <p className="text-sm text-slate font-light italic opacity-70 mt-3 line-clamp-2 max-w-[280px] mx-auto px-4 leading-relaxed">"{stripPassword(business.description)}"</p>
                                             <p className="text-[10px] font-bold pt-5 text-navy opacity-30 group-hover:opacity-100 group-hover:text-gold transition-all uppercase tracking-[0.4em]">Discover</p>
                                         </div>
                                     </Link>

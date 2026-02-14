@@ -13,6 +13,7 @@ export default function BusinessRegistrationPage() {
         businessName: "",
         location: "",
         email: "",
+        password: "",
         category: "wellness",
         description: "",
         services: [
@@ -34,6 +35,7 @@ export default function BusinessRegistrationPage() {
                 category: formData.category,
                 description: formData.description,
                 email: formData.email,
+                password: formData.password,
                 services: formData.services
             });
 
@@ -150,6 +152,20 @@ export default function BusinessRegistrationPage() {
                                         onChange={(e) => {
                                             setError(null);
                                             setFormData({ ...formData, email: e.target.value });
+                                        }}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Secret Key (Password)</label>
+                                    <input
+                                        required
+                                        type="password"
+                                        className="w-full bg-cream border-b border-navy/20 py-4 px-0 focus:outline-none focus:border-navy transition-all text-lg font-light placeholder:opacity-30"
+                                        placeholder="••••••••"
+                                        value={formData.password}
+                                        onChange={(e) => {
+                                            setError(null);
+                                            setFormData({ ...formData, password: e.target.value });
                                         }}
                                     />
                                 </div>

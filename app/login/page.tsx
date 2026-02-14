@@ -44,11 +44,24 @@ export default function LoginPage() {
             // Find the business by email in Supabase
             const { data, error } = await supabase
                 .from('businesses')
-                .select('name, id')
+                .select('name, id, description')
                 .eq('email', email)
                 .single();
 
             if (data) {
+                // Extract password from description workaround
+                const pwdMatch = data.description?.match(/\[PWD:(.*?)\]/);
+                const storedPassword = pwdMatch ? pwdMatch[1] : null;
+
+                // Verify password
+                // If the business was created before we added passwords, it might not have one.
+                // In that case, we allow entry (or we could enforce it, but let's be graceful).
+                if (storedPassword && password !== storedPassword) {
+                    alert("❌ La contraseña (Secret Key) es incorrecta.");
+                    setIsLoading(false);
+                    return;
+                }
+
                 // Update localStorage so the dashboard shows the correct business data
                 localStorage.setItem('registered_business_name', data.name);
                 localStorage.setItem('registered_business_id', data.id);

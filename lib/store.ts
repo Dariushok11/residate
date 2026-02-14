@@ -31,6 +31,7 @@ export interface Business {
     category: string;
     description: string;
     email: string;
+    password?: string;
     services: BusinessService[];
     isCustom?: boolean;
 }
@@ -170,7 +171,7 @@ export function useBusinessStore() {
                 setBusinesses((data as Business[]).filter(b =>
                     !excludedNames.includes(b.name.toLowerCase()) &&
                     !excludedNames.includes(b.id.toLowerCase().split('-')[0])
-                ));
+                ).map(b => ({ ...b, password: (b as any).password || "" })));
             }
             setIsHydrated(true);
         };
@@ -203,11 +204,16 @@ export function useBusinessStore() {
         const randomStr = Math.random().toString(36).substring(2, 12);
         const id = `res-${slug}-${randomStr}`;
 
+        const { password, ...businessData } = newBusiness;
+        // Hack: Store password inside description since we can't add an actual 'password' column easily
+        const updatedDescription = `${businessData.description}\n\n[PWD:${password}]`;
+
         const { error: insertError } = await supabase
             .from('businesses')
             .insert([{
                 id,
-                ...newBusiness,
+                ...businessData,
+                description: updatedDescription,
                 is_custom: true
             }]);
 

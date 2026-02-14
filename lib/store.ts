@@ -160,7 +160,7 @@ export function useBusinessStore() {
                 .select('*');
 
             if (data) {
-                setBusinesses((data as Business[]).filter(b => b.id !== 'vino'));
+                setBusinesses((data as Business[]).filter(b => b.id !== 'vino' && b.id !== 'caleron'));
             }
             setIsHydrated(true);
         };

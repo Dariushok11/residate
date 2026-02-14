@@ -98,34 +98,52 @@ export default function SettingsPage() {
         alert("✨ Settings saved successfully!");
     };
 
-    const handleDeactivate = () => {
-        if (confirm("⚠️ Are you sure you want to deactivate your registry? This action cannot be undone and will permanently erase all your data.")) {
-            if (confirm("🔴 Final confirmation: This will delete all bookings, clients, and settings. Continue?")) {
-                localStorage.clear();
-                alert("Your registry has been deactivated. Redirecting to home...");
-                router.push("/");
+    const handleDeactivate = async () => {
+        const bId = localStorage.getItem('registered_business_id');
+        if (!bId) {
+            alert("❌ No se encontró la sesión activa. Por favor, intenta iniciar sesión de nuevo.");
+            return;
+        }
+
+        if (confirm("⚠️ ¿Estás seguro de que quieres desactivar tu registro? Esta acción es irreversible y borrará todos tus datos de nuestros servidores.")) {
+            if (confirm("🔴 Confirmación Final: Esto eliminará todas las reservas, clientes y tu perfil de negocio. ¿Continuar?")) {
+                const result = await deleteEntireBusiness(bId);
+                if (result && 'success' in result) {
+                    localStorage.clear();
+                    alert("✨ El registro ha sido desactivado y todos los datos eliminados. Redirigiendo...");
+                    window.location.href = "/";
+                } else {
+                    alert("❌ Error durante la desactivación: " + (result?.error || "Desconocido"));
+                }
             }
         }
     };
 
     const handleDeletePermanently = async () => {
         const bId = localStorage.getItem('registered_business_id');
-        if (!bId) return;
+        const bName = localStorage.getItem('registered_business_name') || "este negocio";
 
-        const business = businesses.find(b => b.id === bId);
-        if (!business) return;
+        if (!bId) {
+            alert("❌ Fallo de sesión: No se pudo identificar el negocio a eliminar.");
+            return;
+        }
 
-        const confirmText = `eliminar ${business.name.toLowerCase()}`;
-        const userInput = prompt(`⚠️ ATENCIÓN: Esta acción eliminará el negocio "${business.name}" y TODAS sus reservas para siempre.\n\nNadie podrá volver a verlo y los datos no se podrán recuperar.\n\nPara confirmar, escribe exactamente: ${confirmText}`);
+        const confirmText = `eliminar ${bName.toLowerCase()}`;
+        const userInput = prompt(`⚠️ ATENCIÓN: Esta acción eliminará el negocio "${bName}" y TODAS sus reservas para siempre.\n\nNadie podrá volver a verlo y los datos no se podrán recuperar.\n\nPara confirmar, escribe exactamente: ${confirmText}`);
 
         if (userInput === confirmText) {
-            const result = await deleteEntireBusiness(bId);
-            if ('success' in result) {
-                localStorage.clear();
-                alert("🚀 El negocio y todos sus datos han sido eliminados permanentemente.");
-                router.push("/");
-            } else {
-                alert("Error al eliminar: " + result.error);
+            try {
+                const result = await deleteEntireBusiness(bId);
+                if (result && 'success' in result) {
+                    localStorage.clear();
+                    alert("🚀 El negocio y todos sus datos han sido eliminados permanentemente.");
+                    window.location.href = "/";
+                } else {
+                    alert("❌ Error al eliminar: " + (result?.error || "Error de conexión"));
+                }
+            } catch (err) {
+                console.error("Delete error:", err);
+                alert("❌ Ocurrió un error crítico durante la eliminación.");
             }
         } else if (userInput !== null) {
             alert("❌ Confirmación incorrecta. El negocio no ha sido eliminado.");

@@ -86,7 +86,7 @@ export default function Home() {
                     <div className="container px-4 md-px-6">
                         <div className="flex flex-col md-flex-row md-items-end justify-between mb-16 gap-8">
                             <div className="space-y-4">
-                                <h3 className="text-3xl font-serif text-[var(--text-primary)]">The Art of Stay</h3>
+                                <h3 className="text-3xl font-serif text-[var(--text-primary)]">The Art of reserve</h3>
                                 <div className="h-0.5 w-16 bg-[var(--color-gold)]"></div>
                             </div>
 

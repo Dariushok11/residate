@@ -54,7 +54,7 @@ export default function Home() {
                             Timeless<br />Experiences
                         </h2>
                         <p className="text-cream text-lg md-text-xl max-w-2xl mx-auto font-light tracking-wide opacity-90">
-                            Curated journeys for the discerning traveler, crafted with precision and an eye for the extraordinary.
+                            Reserva con nosotros si quieres una vida más fácil.
                         </p>
 
                         <div className="flex flex-col sm-flex-row gap-4 mt-8 justify-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300 fill-mode-forwards opacity-0" style={{ animationFillMode: 'forwards' }}>

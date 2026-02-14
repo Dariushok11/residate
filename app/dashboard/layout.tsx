@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { LayoutDashboard, Calendar, Users, Settings, LogOut } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardLayout({
     children,
@@ -10,6 +11,14 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
+    const router = useRouter();
+
+    useEffect(() => {
+        const businessName = localStorage.getItem('registered_business_name');
+        if (!businessName) {
+            router.push('/login');
+        }
+    }, [router]);
 
     const isActive = (path: string) => {
         if (path === "/dashboard") {
@@ -76,10 +85,17 @@ export default function DashboardLayout({
                 </nav>
 
                 <div className="border-t border-white/5 p-4">
-                    <Link href="/" className="flex w-full items-center gap-3 px-3 py-3 text-sm font-medium hover:bg-red-500/10 transition-all text-white/60 hover:text-white">
+                    <button
+                        onClick={() => {
+                            localStorage.removeItem('registered_business_name');
+                            localStorage.removeItem('residate-api-key');
+                            window.location.href = "/";
+                        }}
+                        className="flex w-full items-center gap-3 px-3 py-3 text-sm font-medium hover:bg-red-500/10 transition-all text-white/60 hover:text-white"
+                    >
                         <LogOut className="h-4 w-4" />
                         Log Out
-                    </Link>
+                    </button>
                 </div>
             </aside>
 

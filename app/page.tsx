@@ -71,7 +71,7 @@ export default function Home() {
                                 <Button size="lg" className="btn-hero w-full sm-w-auto hover:scale-105 transition-transform duration-300">Book Now</Button>
                             </Link>
                             {hasBusiness && (
-                                <Link href="/login">
+                                <Link href="/dashboard">
                                     <Button size="lg" className="btn-hero w-full sm-w-auto hover:scale-105 transition-transform duration-300">Access Portfolio</Button>
                                 </Link>
                             )}

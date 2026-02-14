@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { X, Lock, Mail, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
     const [isLoading, setIsLoading] = React.useState(false);
@@ -35,13 +36,31 @@ export default function LoginPage() {
         }
     };
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        // Simulate auth delay
-        setTimeout(() => {
-            window.location.href = "/dashboard";
-        }, 1500);
+
+        try {
+            // Find the business by email in Supabase
+            const { data, error } = await supabase
+                .from('businesses')
+                .select('name, id')
+                .eq('email', email)
+                .single();
+
+            if (data) {
+                // Update localStorage so the dashboard shows the correct business data
+                localStorage.setItem('registered_business_name', data.name);
+                window.location.href = "/dashboard";
+            } else {
+                alert("❌ No se encontró ningún negocio registrado con este email.");
+                setIsLoading(false);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("❌ Error durante el acceso. Por favor, inténtalo de nuevo.");
+            setIsLoading(false);
+        }
     };
 
     return (

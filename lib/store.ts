@@ -196,7 +196,6 @@ export function useBusinessStore() {
         const slug = newBusiness.name.toLowerCase().replace(/\s+/g, '-').substring(0, 15);
         const randomStr = Math.random().toString(36).substring(2, 12);
         const id = `res-${slug}-${randomStr}`;
-        console.log("DEBUG: Attempting to register with ID:", id);
 
         const { error: insertError } = await supabase
             .from('businesses')

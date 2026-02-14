@@ -23,7 +23,6 @@ export default function BusinessRegistrationPage() {
 
     const handleNext = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Current step:", step);
         setError(null);
 
         if (step === 3) {
@@ -39,7 +38,6 @@ export default function BusinessRegistrationPage() {
             });
 
             if (result && 'error' in result && result.error) {
-                console.error("Registration error:", result.error);
                 setError(result.error);
                 // setStep(1); // Stay on current step to show error
                 return;
@@ -111,8 +109,8 @@ export default function BusinessRegistrationPage() {
                     {step === 1 && (
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <h2 className="text-3xl font-serif text-navy">Welcome, Partner (System Updated)</h2>
-                                <p className="text-slate font-light">Let's begin by establishing your sanctuary's core identity. [V2.1]</p>
+                                <h2 className="text-3xl font-serif text-navy">Welcome, Partner</h2>
+                                <p className="text-slate font-light">Let's begin by establishing your sanctuary's core identity.</p>
                             </div>
                             <form onSubmit={handleNext} className="space-y-6">
                                 <div className="space-y-2">

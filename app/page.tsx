@@ -9,6 +9,15 @@ import { useBusinessStore } from "@/lib/store";
 
 export default function Home() {
     const [searchTerm, setSearchTerm] = React.useState('');
+    const [hasBusiness, setHasBusiness] = React.useState(false);
+
+    React.useEffect(() => {
+        const savedName = localStorage.getItem('registered_business_name');
+        if (savedName) {
+            setHasBusiness(true);
+        }
+    }, []);
+
     const { businesses, isHydrated } = useBusinessStore();
 
     const filteredBusinesses = React.useMemo(() => {
@@ -61,9 +70,11 @@ export default function Home() {
                             <Link href="/book">
                                 <Button size="lg" className="btn-hero w-full sm-w-auto hover:scale-105 transition-transform duration-300">Book Now</Button>
                             </Link>
-                            <Link href="/login">
-                                <Button size="lg" className="btn-hero w-full sm-w-auto hover:scale-105 transition-transform duration-300">Access Portfolio</Button>
-                            </Link>
+                            {hasBusiness && (
+                                <Link href="/login">
+                                    <Button size="lg" className="btn-hero w-full sm-w-auto hover:scale-105 transition-transform duration-300">Access Portfolio</Button>
+                                </Link>
+                            )}
                         </div>
 
 

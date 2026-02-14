@@ -173,9 +173,11 @@ export function useBusinessStore() {
 
             if (businessesData) {
                 const deletedIds = new Set(signalsData?.map(s => s.business_id) || []);
+                const hardExcludedNames = ['caleron', 'vino'];
 
                 setBusinesses((businessesData as Business[]).filter(b =>
-                    !deletedIds.has(b.id)
+                    !deletedIds.has(b.id) &&
+                    !hardExcludedNames.includes(b.name.toLowerCase().trim())
                 ).map(b => ({ ...b, password: (b as any).password || "" })));
             }
             setIsHydrated(true);

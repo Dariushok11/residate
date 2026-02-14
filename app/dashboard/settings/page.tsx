@@ -108,6 +108,35 @@ export default function SettingsPage() {
         }
     };
 
+    const { resetBusinessBookings } = useBookingStore();
+
+    const handleResetLedger = async () => {
+        const savedName = localStorage.getItem('registered_business_name');
+        if (!savedName) return;
+        const bId = savedName.toLowerCase().replace(/\s+/g, '-');
+        const business = businesses.find(b => b.id === bId);
+
+        if (!business) {
+            alert("No se ha encontrado el negocio en el registro.");
+            return;
+        }
+
+        const emailPrompter = prompt("⚠️ Esta acción borrará TODAS las reservas de tu negocio.\n\nPara confirmar que eres el creador, por favor introduce el email del negocio:");
+
+        if (emailPrompter === business.email) {
+            if (confirm("¿Estás 100% seguro? Esta acción es irreversible.")) {
+                const result = await resetBusinessBookings(bId);
+                if ('success' in result) {
+                    alert("✨ El 'Ledger' ha sido reiniciado con éxito. Todas las reservas han sido eliminadas.");
+                } else {
+                    alert("Error al reiniciar: " + result.error);
+                }
+            }
+        } else if (emailPrompter !== null) {
+            alert("❌ Email incorrecto. Solo el creador del negocio puede reiniciar el Ledger.");
+        }
+    };
+
     const updateSetting = (key: keyof UserSettings, value: any) => {
         setSettings(prev => ({ ...prev, [key]: value }));
         setHasChanges(true);
@@ -483,7 +512,21 @@ export default function SettingsPage() {
                         )}
 
                         {/* Dangerous Zone - Always visible */}
-                        <section className="pt-8 border-t border-navy/5">
+                        <section className="pt-8 border-t border-navy/5 space-y-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h4 className="text-sm font-serif text-amber-600">Reset Ledger</h4>
+                                    <p className="text-xs text-slate mt-1">Borra todas las reservas y el historial de este negocio. (Solo para creadores)</p>
+                                </div>
+                                <Button
+                                    onClick={handleResetLedger}
+                                    variant="ghost"
+                                    className="text-amber-600 hover:bg-amber-50 border border-amber-600/20"
+                                >
+                                    Reset Ledger
+                                </Button>
+                            </div>
+
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h4 className="text-sm font-serif text-red-500">Deactivate Registry</h4>

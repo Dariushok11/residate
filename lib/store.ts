@@ -122,6 +122,19 @@ export function useBookingStore() {
         console.warn("Reset store disabled for safety");
     }, []);
 
+    const resetBusinessBookings = useCallback(async (businessId: string) => {
+        const { error } = await supabase
+            .from('bookings')
+            .delete()
+            .eq('business_id', businessId);
+
+        if (error) {
+            console.error("Error resetting business bookings:", error);
+            return { error: error.message };
+        }
+        return { success: true };
+    }, []);
+
     return {
         slots,
         isHydrated,
@@ -130,7 +143,8 @@ export function useBookingStore() {
         getSlot,
         toggleVIP,
         removeClient,
-        resetStore
+        resetStore,
+        resetBusinessBookings
     };
 }
 

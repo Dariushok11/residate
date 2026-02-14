@@ -38,12 +38,12 @@ export default function Home() {
                         <h1 className="text-2xl font-bold uppercase tracking-widest font-serif">ResiDate</h1>
                     </div>
                     <nav className="hidden md-flex items-center gap-8 text-sm font-medium tracking-wide uppercase text-[var(--text-secondary)]">
-                        <Link href="/destinations" className="hover:text-[var(--text-primary)] transition-colors">Destinations</Link>
+                        <Link href="/destinations" className="hover:text-[var(--text-primary)] transition-colors">Destinos</Link>
                         <Link href="/journal" className="hover:text-[var(--text-primary)] transition-colors">Sobre nosotros</Link>
                     </nav>
                     <div className="flex items-center gap-4">
                         <Link href="/login">
-                            <Button variant="ghost" className="hidden sm-inline-flex">Log In</Button>
+                            <Button variant="ghost" className="hidden sm-inline-flex">Acceder</Button>
                         </Link>
                         <Link href="/book">
                             <Button>Book Now</Button>
@@ -60,7 +60,7 @@ export default function Home() {
 
                     <div className="relative z-10 max-w-4xl space-y-6">
                         <h2 className="text-5xl md-text-7xl font-serif text-white tracking-tight leading-tight">
-                            Timeless<br />Experiences
+                            Experiencias<br />Inolvidables
                         </h2>
                         <p className="text-cream text-lg md-text-xl max-w-2xl mx-auto font-light tracking-wide opacity-90">
                             Reserva con nosotros si quieres una vida más fácil.
@@ -86,7 +86,7 @@ export default function Home() {
                     <div className="container px-4 md-px-6">
                         <div className="flex flex-col md-flex-row md-items-end justify-between mb-16 gap-8">
                             <div className="space-y-4">
-                                <h3 className="text-3xl font-serif text-[var(--text-primary)]">The Art of Stay</h3>
+                                <h3 className="text-3xl font-serif text-[var(--text-primary)]">El Arte de la Hospitalidad</h3>
                                 <div className="h-0.5 w-16 bg-[var(--color-gold)]"></div>
                             </div>
 
@@ -136,11 +136,11 @@ export default function Home() {
                                             onClick={() => setSearchTerm('')}
                                             className="text-[var(--color-gold)] text-sm uppercase tracking-widest font-medium border-b border-[var(--color-gold)]"
                                         >
-                                            View All Destinations
+                                            Ver todos los negocios
                                         </button>
                                     ) : (
                                         <Link href="/register/business">
-                                            <Button variant="ghost" className="text-gold uppercase tracking-widest">Register Your Sanctuary</Button>
+                                            <Button variant="ghost" className="text-gold uppercase tracking-widest">Registra tu Negocio</Button>
                                         </Link>
                                     )}
                                 </div>
@@ -152,13 +152,13 @@ export default function Home() {
                 {/* Partner Section */}
                 <section className="py-24 bg-navy text-white text-center">
                     <div className="container px-4 md-px-6 max-w-4xl space-y-8">
-                        <h3 className="text-4xl md-text-5xl font-serif tracking-tight">Expand Your Reach</h3>
+                        <h3 className="text-4xl md-text-5xl font-serif tracking-tight">Expande tu Alcance</h3>
                         <p className="text-cream/80 text-lg md-text-xl font-light tracking-wide max-w-2xl mx-auto">
-                            Join our curated collection of the world's most extraordinary sanctuaries and reach a global audience of discerning travelers.
+                            Únete a nuestra exclusiva colección de los negocios más extraordinarios del mundo y llega a un público global de usuarios exigentes.
                         </p>
                         <div className="pt-4">
                             <Link href="/register/business">
-                                <Button size="lg" className="btn-hero px-12">Partner with Us</Button>
+                                <Button size="lg" className="btn-hero px-12">Colabora con Nosotros</Button>
                             </Link>
                         </div>
                     </div>

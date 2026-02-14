@@ -29,13 +29,13 @@ export default function DestinationsPage() {
                 <div className="absolute top-8 left-4 md:left-8 z-20">
                     <Link href="/" className="inline-flex items-center gap-2 text-xs md:text-sm uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity text-white">
                         <ArrowLeft className="h-4 w-4" />
-                        Return Home
+                        Volver al inicio
                     </Link>
                 </div>
 
                 <div className="max-w-4xl mx-auto text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <span className="text-xs uppercase tracking-[0.2em] text-gold font-medium block">Explore The Collection</span>
-                    <h1 className="text-4xl md:text-5xl font-serif">Curated Destinations</h1>
+                    <span className="text-xs uppercase tracking-[0.2em] text-gold font-medium block">Explora la Colección</span>
+                    <h1 className="text-4xl md:text-5xl font-serif">Destinos Seleccionados</h1>
 
                     {/* Search Bar - Stylized to match Main Page */}
                     <div className="max-w-2xl mx-auto mt-12 relative group text-left">
@@ -54,11 +54,11 @@ export default function DestinationsPage() {
             {/* Results Grid */}
             <div className="max-w-7xl mx-auto px-4 md:px-8 py-20">
                 {!isHydrated ? (
-                    <div className="text-center py-20 opacity-50 font-serif italic">Loading collection...</div>
+                    <div className="text-center py-20 opacity-50 font-serif italic">Cargando colección...</div>
                 ) : filteredBusinesses.length === 0 ? (
                     <div className="text-center py-20 space-y-4">
-                        <p className="text-2xl font-serif text-navy/50">No destinations found matching your criteria.</p>
-                        <Button variant="ghost" onClick={() => setSearchTerm('')} className="text-gold hover:text-navy">Clear Filters</Button>
+                        <p className="text-2xl font-serif text-navy/50">No se han encontrado negocios con esos criterios.</p>
+                        <Button variant="ghost" onClick={() => setSearchTerm('')} className="text-gold hover:text-navy">Limpiar filtros</Button>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

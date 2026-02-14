@@ -21,13 +21,13 @@ export default function BusinessRegistrationPage() {
     });
     const [error, setError] = React.useState<string | null>(null);
 
-    const handleNext = (e: React.FormEvent) => {
+    const handleNext = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
 
         if (step === 3) {
             // Save business to the persistent store
-            const result = addBusiness({
+            const result = await addBusiness({
                 name: formData.businessName,
                 location: formData.location,
                 category: formData.category,
@@ -36,7 +36,7 @@ export default function BusinessRegistrationPage() {
                 services: formData.services
             });
 
-            if (result.error) {
+            if (result && 'error' in result && result.error) {
                 setError(result.error);
                 setStep(2); // Go back to where email is shown
                 return;

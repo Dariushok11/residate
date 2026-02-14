@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { MobileNav } from "@/components/ui/mobile-nav";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
@@ -38,7 +37,6 @@ export default function Home() {
             <header className="sticky top-0 z-50 w-full border-b border-[var(--border-subtle)] bg-[var(--bg-primary)]/80 backdrop-blur">
                 <div className="container flex h-[var(--header-height)] items-center justify-between px-4 md-px-6">
                     <div className="flex items-center gap-3">
-                        <MobileNav />
                         <img src="/logo_fix.png" alt="ResiDate Logo" className="h-10 w-10 object-contain" style={{ minWidth: '40px' }} />
                         <h1 className="text-2xl font-bold uppercase tracking-widest font-serif">ResiDate</h1>
                     </div>

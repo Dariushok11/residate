@@ -57,7 +57,7 @@ export function useBookingStore() {
                     businessId: b.business_id,
                     day: b.day_key,
                     hour: b.hour,
-                    status: 'booked', // Simplified for prototype
+                    status: b.guest_email === 'personal@blocked.com' || b.guest_email === 'gcal@sync.com' ? 'blocked' : 'booked',
                     clientName: b.guest_name,
                     clientEmail: b.guest_email,
                     service: b.service_name,
@@ -100,9 +100,15 @@ export function useBookingStore() {
         if (error) console.error("Error adding booking:", error);
     }, []);
 
-    const toggleBlock = useCallback((businessId: string, day: string, hour: number) => {
-        // Blocks are not yet fully implemented in Supabase for the prototype
-        console.warn("Toggle block not yet synced with cloud");
+    const toggleBlock = useCallback(async (businessId: string, day: string, hour: number) => {
+        const { error } = await supabase
+            .from('bookings')
+            .delete()
+            .match({ business_id: businessId, day_key: day, hour: hour });
+
+        if (error) {
+            console.error("Error toggling/removing block:", error);
+        }
     }, []);
 
     const toggleVIP = useCallback((clientEmail: string) => {

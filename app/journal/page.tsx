@@ -18,8 +18,8 @@ export default function JournalPage() {
                 <header className="mb-16 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <span className="text-xs uppercase tracking-[0.2em] text-gold font-medium block">The Philosophy</span>
                     <h1 className="text-4xl md:text-6xl font-serif leading-tight">
-                        Seamless Connection, <br className="hidden md:block" />
-                        <span className="italic text-slate-400">Timeless Efficiency.</span>
+                        Qué Hace Nuestra Web, <br className="hidden md:block" />
+                        <span className="italic text-slate-400">Eficiencia Sin Límites.</span>
                     </h1>
                 </header>
 

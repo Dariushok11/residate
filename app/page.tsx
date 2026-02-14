@@ -27,7 +27,6 @@ export default function Home() {
                     <div className="flex items-center gap-3">
                         <img src="/logo_fix.png" alt="ResiDate Logo" className="h-10 w-10 object-contain" style={{ minWidth: '40px' }} />
                         <h1 className="text-2xl font-bold uppercase tracking-widest font-serif">ResiDate</h1>
-                        <span className="text-[8px] opacity-20 ml-1">v2.0-cloud</span>
                     </div>
                     <nav className="hidden md-flex items-center gap-8 text-sm font-medium tracking-wide uppercase text-[var(--text-secondary)]">
                         <Link href="/destinations" className="hover:text-[var(--text-primary)] transition-colors">Destinations</Link>

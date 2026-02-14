@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useBookingStore, useBusinessStore } from "@/lib/store";
 
-const SETTINGS_STORAGE_KEY = 'reserva-pro-settings';
+const SETTINGS_STORAGE_KEY = 'residate-settings';
 
 interface UserSettings {
     fullName: string;
@@ -48,7 +48,7 @@ export default function SettingsPage() {
         }
 
         // Load API key
-        const storedApiKey = localStorage.getItem('reserva-pro-api-key');
+        const storedApiKey = localStorage.getItem('residate-api-key');
         if (storedApiKey) {
             setApiKey(storedApiKey);
         }
@@ -61,7 +61,7 @@ export default function SettingsPage() {
                     setHasChanges(false);
                 } catch (err) { }
             }
-            if (e.key === 'reserva-pro-api-key' && e.newValue) {
+            if (e.key === 'residate-api-key' && e.newValue) {
                 setApiKey(e.newValue);
             }
         };
@@ -74,7 +74,7 @@ export default function SettingsPage() {
                     setHasChanges(false);
                 } catch (err) { }
             }
-            if (e.detail?.key === 'reserva-pro-api-key' && e.detail?.value) {
+            if (e.detail?.key === 'residate-api-key' && e.detail?.value) {
                 setApiKey(e.detail.value);
             }
         }) as EventListener;
@@ -118,10 +118,10 @@ export default function SettingsPage() {
             Math.random().toString(36).charAt(2)
         ).join('');
         setApiKey(key);
-        localStorage.setItem('reserva-pro-api-key', key);
+        localStorage.setItem('residate-api-key', key);
         // Dispatch custom event for same-tab sync
         window.dispatchEvent(new CustomEvent('localStorageUpdate', {
-            detail: { key: 'reserva-pro-api-key', value: key }
+            detail: { key: 'residate-api-key', value: key }
         }));
         alert('🔑 API Key generated successfully!');
     };
@@ -172,7 +172,7 @@ export default function SettingsPage() {
         const blob = new Blob([icsContent.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `reservapro-bookings-${new Date().toISOString().split('T')[0]}.ics`;
+        link.download = `residate-bookings-${new Date().toISOString().split('T')[0]}.ics`;
         link.click();
 
         alert(`✅ Exported ${bookings.length} booking(s) to calendar file!`);
@@ -190,7 +190,7 @@ export default function SettingsPage() {
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `reservapro-data-${new Date().toISOString().split('T')[0]}.json`;
+        link.download = `residate-data-${new Date().toISOString().split('T')[0]}.json`;
         link.click();
 
         alert('✅ Data exported successfully!');

@@ -42,7 +42,7 @@ export function BusinessCalendar() {
         }, 1000);
 
         // Check if GCal is connected from setting
-        const gcal = localStorage.getItem('reserva-pro-gcal-connected');
+        const gcal = localStorage.getItem('residate-gcal-connected');
         if (gcal === 'true') {
             setIsGCalConnected(true);
             // In a real app, we might auto-sync here on load
@@ -53,7 +53,7 @@ export function BusinessCalendar() {
     }, []);
 
     const syncCalendar = async () => {
-        const icalUrl = localStorage.getItem('reserva-pro-ical-url');
+        const icalUrl = localStorage.getItem('residate-ical-url');
         if (!icalUrl) return;
 
         setIsSyncing(true);
@@ -102,8 +102,7 @@ export function BusinessCalendar() {
                                 hour,
                                 "Google Calendar", // clientName
                                 event.summary || "Busy", // service
-                                "gcal@sync.com", // clientEmail
-                                "blocked" // status
+                                "gcal@sync.com" // clientEmail
                             );
                             syncedCount++;
                         }
@@ -188,7 +187,7 @@ export function BusinessCalendar() {
 
         // Simplemente añadimos/sobrescribimos bloqueo
         // "Personal" -> clientName indicates manual block
-        addBooking(currentBusinessId, selectedSlot.day, selectedSlot.hour, "Personal", blockReason, "personal@blocked.com", "blocked");
+        addBooking(currentBusinessId, selectedSlot.day, selectedSlot.hour, "Personal", blockReason, "personal@blocked.com");
 
         // alert(`✅ Bloqueo guardado.`); // Removing alert for smoother UX
         setShowBlockModal(false);
@@ -211,8 +210,8 @@ export function BusinessCalendar() {
             const confirmDisconnect = window.confirm("¿Seguro que quieres desconectar Google Calendar?");
             if (confirmDisconnect) {
                 setIsGCalConnected(false);
-                localStorage.removeItem('reserva-pro-gcal-connected');
-                localStorage.removeItem('reserva-pro-ical-url');
+                localStorage.removeItem('residate-gcal-connected');
+                localStorage.removeItem('residate-ical-url');
                 // Optional: Recargar para limpiar eventos si no están en una base de datos real
                 // window.location.reload(); 
             }
@@ -231,8 +230,8 @@ export function BusinessCalendar() {
                 fetchUrl = url.replace('webcal://', 'https://');
             }
 
-            localStorage.setItem('reserva-pro-ical-url', fetchUrl);
-            localStorage.setItem('reserva-pro-gcal-connected', 'true');
+            localStorage.setItem('residate-ical-url', fetchUrl);
+            localStorage.setItem('residate-gcal-connected', 'true');
             setIsGCalConnected(true);
             syncCalendar();
             setShowGCalModal(false);

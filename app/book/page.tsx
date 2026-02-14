@@ -32,12 +32,8 @@ function BookingContent() {
     const { addBooking, getSlot, isHydrated, resetStore } = useBookingStore();
     const { businesses } = useBusinessStore();
 
-    const [businessName, setBusinessName] = React.useState<string>("The Sanctuary");
-    const [availableServices, setAvailableServices] = React.useState<any[]>([
-        { id: "1", name: "Signature Facial", duration: 60, price: 150 },
-        { id: "2", name: "Deep Tissue Massage", duration: 90, price: 220 },
-        { id: "3", name: "Wellness Consultation", duration: 45, price: 120 },
-    ]);
+    const [businessName, setBusinessName] = React.useState<string>("Cargando...");
+    const [availableServices, setAvailableServices] = React.useState<any[]>([]);
 
     React.useEffect(() => {
         const savedName = localStorage.getItem('registered_business_name');

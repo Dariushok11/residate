@@ -10,13 +10,28 @@ export default function LoginPage() {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
 
-    const handleForgotKey = (e: React.MouseEvent) => {
+    const handleForgotKey = async (e: React.MouseEvent) => {
         e.preventDefault();
         if (!email) {
-            alert("Please enter your email address first.");
+            alert("Por favor, introduce tu correo electrónico primero.");
             return;
         }
-        alert(`[SIMULATION] Email sent to ${email}.\n\nYour recovery key is: "secret-key-123"`);
+
+        try {
+            const response = await fetch('/api/forgot-key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            if (response.ok) {
+                alert(`✨ ¡Enviado! Revisa la bandeja de entrada de ${email}.`);
+            } else {
+                alert("❌ Hubo un error al enviar el correo. Por favor, inténtalo de nuevo.");
+            }
+        } catch (error) {
+            alert("❌ No se pudo conectar con el servidor de correos.");
+        }
     };
 
     const handleLogin = (e: React.FormEvent) => {

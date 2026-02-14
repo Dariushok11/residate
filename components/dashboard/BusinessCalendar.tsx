@@ -31,9 +31,9 @@ export function BusinessCalendar() {
     const [currentBusinessId, setCurrentBusinessId] = React.useState<string>("default-business");
 
     React.useEffect(() => {
-        const savedName = localStorage.getItem('registered_business_name');
-        if (savedName) {
-            setCurrentBusinessId(savedName.toLowerCase().replace(/\s+/g, '-'));
+        const savedId = localStorage.getItem('registered_business_id');
+        if (savedId) {
+            setCurrentBusinessId(savedId);
         } else if (businesses.length > 0) {
             setCurrentBusinessId(businesses[0].id);
         }

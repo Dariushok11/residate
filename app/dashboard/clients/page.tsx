@@ -17,9 +17,9 @@ export default function ClientsPage() {
     const [businessId, setBusinessId] = useState<string | null>(null);
 
     useEffect(() => {
-        const savedName = localStorage.getItem('registered_business_name');
-        if (savedName) {
-            setBusinessId(savedName.toLowerCase().replace(/\s+/g, '-'));
+        const savedId = localStorage.getItem('registered_business_id');
+        if (savedId) {
+            setBusinessId(savedId);
         }
     }, []);
 

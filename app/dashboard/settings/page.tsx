@@ -111,9 +111,8 @@ export default function SettingsPage() {
     const { resetBusinessBookings } = useBookingStore();
 
     const handleResetLedger = async () => {
-        const savedName = localStorage.getItem('registered_business_name');
-        if (!savedName) return;
-        const bId = savedName.toLowerCase().replace(/\s+/g, '-');
+        const bId = localStorage.getItem('registered_business_id');
+        if (!bId) return;
         const business = businesses.find(b => b.id === bId);
 
         if (!business) {

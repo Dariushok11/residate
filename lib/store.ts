@@ -160,7 +160,11 @@ export function useBusinessStore() {
                 .select('*');
 
             if (data) {
-                setBusinesses((data as Business[]).filter(b => b.id !== 'vino' && b.id !== 'caleron'));
+                const excludedNames = ['caleron', 'vino'];
+                setBusinesses((data as Business[]).filter(b =>
+                    !excludedNames.includes(b.name.toLowerCase()) &&
+                    !excludedNames.includes(b.id.toLowerCase().split('-')[0])
+                ));
             }
             setIsHydrated(true);
         };
@@ -183,16 +187,18 @@ export function useBusinessStore() {
         const { data: existing } = await supabase
             .from('businesses')
             .select('id')
-            .eq('email', newBusiness.email)
-            .single();
+            .eq('email', newBusiness.email);
 
-        if (existing) {
+        if (existing && existing.length > 0) {
             return { error: "Este email ya está registrado con otro negocio. Por favor, usa una cuenta diferente." };
         }
 
-        const id = newBusiness.name.toLowerCase().replace(/\s+/g, '-');
+        const slug = newBusiness.name.toLowerCase().replace(/\s+/g, '-').substring(0, 15);
+        const randomStr = Math.random().toString(36).substring(2, 12);
+        const id = `res-${slug}-${randomStr}`;
+        console.log("DEBUG: Attempting to register with ID:", id);
 
-        const { error } = await supabase
+        const { error: insertError } = await supabase
             .from('businesses')
             .insert([{
                 id,
@@ -200,9 +206,13 @@ export function useBusinessStore() {
                 is_custom: true
             }]);
 
-        if (error) {
-            console.error("Error adding business:", error);
-            return { error: error.message };
+        if (insertError) {
+            console.error("Error adding business:", insertError);
+            // If it's still a duplicate key error, it might be the email despite the message saying pkey
+            if (insertError.code === '23505') {
+                return { error: "Este negocio o email ya está registrado. Si es tuyo, por favor inicia sesión o usa un email diferente." };
+            }
+            return { error: insertError.message };
         }
 
         return { id };

@@ -23,9 +23,11 @@ export default function BusinessRegistrationPage() {
 
     const handleNext = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("Current step:", step);
         setError(null);
 
         if (step === 3) {
+            console.log("Finalizing registration for:", formData.businessName);
             // Save business to the persistent store
             const result = await addBusiness({
                 name: formData.businessName,
@@ -37,15 +39,23 @@ export default function BusinessRegistrationPage() {
             });
 
             if (result && 'error' in result && result.error) {
+                console.error("Registration error:", result.error);
                 setError(result.error);
-                setStep(1); // Go back to where email is shown
+                // setStep(1); // Stay on current step to show error
                 return;
             }
 
-            // Also keep the simple greeting name
+            // Store the actual business data
             localStorage.setItem('registered_business_name', formData.businessName);
+            if (result && 'id' in result && result.id) {
+                localStorage.setItem('registered_business_id', result.id as string);
+                console.log("Registered business ID:", result.id);
+            }
         }
+
+        console.log("Advancing to step:", step + 1);
         setStep(step + 1);
+        window.scrollTo(0, 0); // Scroll to top for better UX
     };
 
     const addService = () => {
@@ -101,8 +111,8 @@ export default function BusinessRegistrationPage() {
                     {step === 1 && (
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <h2 className="text-3xl font-serif text-navy">Welcome, Partner</h2>
-                                <p className="text-slate font-light">Let's begin by establishing your sanctuary's core identity.</p>
+                                <h2 className="text-3xl font-serif text-navy">Welcome, Partner (System Updated)</h2>
+                                <p className="text-slate font-light">Let's begin by establishing your sanctuary's core identity. [V2.1]</p>
                             </div>
                             <form onSubmit={handleNext} className="space-y-6">
                                 <div className="space-y-2">
@@ -112,7 +122,10 @@ export default function BusinessRegistrationPage() {
                                         className="w-full bg-cream border-b border-navy/20 py-4 px-0 focus:outline-none focus:border-navy transition-all text-lg font-light placeholder:opacity-30"
                                         placeholder="e.g., Azure Retreat"
                                         value={formData.businessName}
-                                        onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
+                                        onChange={(e) => {
+                                            setError(null);
+                                            setFormData({ ...formData, businessName: e.target.value });
+                                        }}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -122,7 +135,10 @@ export default function BusinessRegistrationPage() {
                                         className="w-full bg-cream border-b border-navy/20 py-4 px-0 focus:outline-none focus:border-navy transition-all text-lg font-light placeholder:opacity-30"
                                         placeholder="e.g., Santorini • Greece"
                                         value={formData.location}
-                                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                        onChange={(e) => {
+                                            setError(null);
+                                            setFormData({ ...formData, location: e.target.value });
+                                        }}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -133,7 +149,10 @@ export default function BusinessRegistrationPage() {
                                         className="w-full bg-cream border-b border-navy/20 py-4 px-0 focus:outline-none focus:border-navy transition-all text-lg font-light placeholder:opacity-30"
                                         placeholder="partner@example.com"
                                         value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        onChange={(e) => {
+                                            setError(null);
+                                            setFormData({ ...formData, email: e.target.value });
+                                        }}
                                     />
                                 </div>
                                 {error && (

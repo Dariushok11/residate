@@ -51,6 +51,7 @@ export default function LoginPage() {
             if (data) {
                 // Update localStorage so the dashboard shows the correct business data
                 localStorage.setItem('registered_business_name', data.name);
+                localStorage.setItem('registered_business_id', data.id);
                 window.location.href = "/dashboard";
             } else {
                 alert("❌ No se encontró ningún negocio registrado con este email.");

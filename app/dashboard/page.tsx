@@ -13,11 +13,9 @@ export default function DashboardPage() {
 
     React.useEffect(() => {
         const savedName = localStorage.getItem('registered_business_name');
-        if (savedName) {
-            setBusinessName(savedName);
-            // Derive ID from name as we do in addBusiness
-            setBusinessId(savedName.toLowerCase().replace(/\s+/g, '-'));
-        }
+        const savedId = localStorage.getItem('registered_business_id');
+        if (savedName) setBusinessName(savedName);
+        if (savedId) setBusinessId(savedId);
     }, []);
 
     // Filter for the current business bookings

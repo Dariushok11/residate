@@ -172,7 +172,7 @@ export function useBusinessStore() {
             .insert([{
                 id,
                 ...newBusiness,
-                isCustom: true
+                is_custom: true
             }]);
 
         if (error) {

@@ -146,7 +146,7 @@ export function useBusinessStore() {
                 .select('*');
 
             if (data) {
-                setBusinesses(data as Business[]);
+                setBusinesses((data as Business[]).filter(b => b.id !== 'vino'));
             }
             setIsHydrated(true);
         };

@@ -167,11 +167,10 @@ export function useBusinessStore() {
                 .select('*');
 
             if (data) {
-                const excludedNames = ['caleron', 'vino'];
-                setBusinesses((data as Business[]).filter(b =>
-                    !excludedNames.includes(b.name.toLowerCase()) &&
-                    !excludedNames.includes(b.id.toLowerCase().split('-')[0])
-                ).map(b => ({ ...b, password: (b as any).password || "" })));
+                setBusinesses((data as Business[]).map(b => ({
+                    ...b,
+                    password: (b as any).password || ""
+                })));
             }
             setIsHydrated(true);
         };

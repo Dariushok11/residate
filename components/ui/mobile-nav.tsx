@@ -37,7 +37,7 @@ export function MobileNav() {
                             <Link href="/book" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Destinations</Link>
                             <Link href="/book" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Experiences</Link>
                             <Link href="/book" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Membership</Link>
-                            <Link href="/book" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Journal</Link>
+                            <Link href="/book" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Sobre nosotros</Link>
 
                             <div className="h-px w-10 bg-gold my-4 opacity-50"></div>
 

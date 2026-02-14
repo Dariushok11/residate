@@ -30,7 +30,7 @@ export default function Home() {
                     </div>
                     <nav className="hidden md-flex items-center gap-8 text-sm font-medium tracking-wide uppercase text-[var(--text-secondary)]">
                         <Link href="/destinations" className="hover:text-[var(--text-primary)] transition-colors">Destinations</Link>
-                        <Link href="/journal" className="hover:text-[var(--text-primary)] transition-colors">Journal</Link>
+                        <Link href="/journal" className="hover:text-[var(--text-primary)] transition-colors">Sobre nosotros</Link>
                     </nav>
                     <div className="flex items-center gap-4">
                         <Link href="/login">

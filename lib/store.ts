@@ -101,16 +101,30 @@ export function useBookingStore() {
         if (error) console.error("Error adding booking:", error);
     }, []);
 
-    const toggleBlock = useCallback(async (businessId: string, day: string, hour: number) => {
+    const deleteBooking = useCallback(async (id: string) => {
         const { error } = await supabase
             .from('bookings')
             .delete()
-            .match({ business_id: businessId, day_key: day, hour: hour });
+            .eq('id', id);
 
         if (error) {
-            console.error("Error toggling/removing block:", error);
+            console.error("Error deleting booking:", error);
+            return { error: error.message };
         }
+        return { success: true };
     }, []);
+
+    const toggleBlock = useCallback(async (businessId: string, day: string, hour: number) => {
+        // Find if slot exists first to get ID
+        const existing = slots.find(s => s.businessId === businessId && s.day === day && s.hour === hour);
+
+        if (existing) {
+            return await deleteBooking(existing.id);
+        } else {
+            // If it doesn't exist, we add a block (legacy behavior of toggle)
+            return await addBooking(businessId, day, hour, "Personal", "", "personal@blocked.com");
+        }
+    }, [slots, deleteBooking, addBooking]);
 
     const toggleVIP = useCallback((clientEmail: string) => {
         // VIP status not yet fully implemented in Supabase
@@ -146,6 +160,7 @@ export function useBookingStore() {
         slots,
         isHydrated,
         addBooking,
+        deleteBooking,
         toggleBlock,
         getSlot,
         toggleVIP,

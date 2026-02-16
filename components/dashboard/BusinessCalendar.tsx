@@ -22,7 +22,7 @@ export function BusinessCalendar() {
     // Estado para la fecha/hora actual y la fecha de visualización
     const [now, setNow] = React.useState<Date | null>(null);
     const [viewDate, setViewDate] = React.useState<Date | null>(null);
-    const { toggleBlock, getSlot, addBooking } = useBookingStore();
+    const { toggleBlock, getSlot, addBooking, deleteBooking } = useBookingStore();
     const { businesses } = useBusinessStore();
     const [isClient, setIsClient] = React.useState(false);
 
@@ -31,7 +31,7 @@ export function BusinessCalendar() {
     const [showGCalModal, setShowGCalModal] = React.useState(false); // Nuevo estado para modal GCal
     const [blockReason, setBlockReason] = React.useState("Personal Commitment");
     const [icalUrlInput, setIcalUrlInput] = React.useState(""); // Estado para el input de URL
-    const [selectedSlot, setSelectedSlot] = React.useState<{ day: string, hour: number } | null>(null);
+    const [selectedSlot, setSelectedSlot] = React.useState<{ day: string, hour: number, id?: string } | null>(null);
     const [mobileDayIndex, setMobileDayIndex] = React.useState(0);
     const [isGCalConnected, setIsGCalConnected] = React.useState(false);
     const [isSyncing, setIsSyncing] = React.useState(false);
@@ -180,7 +180,7 @@ export function BusinessCalendar() {
 
         // Open modal for ANY slot click, allowing edit or new block
         // Pre-fill modal
-        setSelectedSlot({ day: dayKey, hour: hour });
+        setSelectedSlot({ day: dayKey, hour: hour, id: existingSlot?.id });
         setBlockReason(existingSlot ? (existingSlot.service || "") : ""); // Pre-fill if exists
         setShowBlockModal(true);
     };
@@ -198,9 +198,16 @@ export function BusinessCalendar() {
         setSelectedSlot(null);
     };
 
-    const handleDeleteBlock = () => {
+    const handleDeleteBlock = async () => {
         if (!selectedSlot) return;
-        toggleBlock(currentBusinessId, selectedSlot.day, selectedSlot.hour); // This toggles it OFF if it exists
+
+        if (selectedSlot.id) {
+            await deleteBooking(selectedSlot.id);
+        } else {
+            // Fallback to coordinates if ID is missing for some reason
+            await toggleBlock(currentBusinessId, selectedSlot.day, selectedSlot.hour);
+        }
+
         setShowBlockModal(false);
         setBlockReason(""); // Reset
         setSelectedSlot(null);

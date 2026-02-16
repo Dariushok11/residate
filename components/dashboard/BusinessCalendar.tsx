@@ -10,6 +10,14 @@ import { useBookingStore, useBusinessStore } from "@/lib/store";
 const HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 8 AM to 8 PM
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+// Helper to get a stable unique key for a specific date
+const formatDateKey = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 export function BusinessCalendar() {
     // Estado para la fecha/hora actual y la fecha de visualización
     const [now, setNow] = React.useState<Date | null>(null);
@@ -87,34 +95,20 @@ export function BusinessCalendar() {
             events.forEach(event => {
                 if (event.start) {
                     const start = event.start;
-                    const dayIndex = start.getDay();
-                    // We need to match this to our "Mon", "Tue"... strings.
-                    // Our store expects string days.
-                    // Note: parser returns naive date. We assume it matches our "week" view for simplicity or just recurring logic.
-                    // ACTUALLY: The store uses generic "Mon", "Tue". It doesn't support specific dates yet (legacy limitation mentioned before).
-                    // So we will map the event's weekday to the store's generic day. 
-                    // This means a "Friday" event on GCal will block "Every Friday" in this simple store version.
-                    // To fix properly, store needs full dates. But per instructions, we integrate into existing app.
+                    const dayKey = formatDateKey(start);
 
-                    // Compatibility map:
-                    // ical parser day 0 (Sun) -> index 6 in our array logic? No, lets use standard name
-                    const dayNameFull = dayMap[dayIndex]; // "Sun", "Mon"...
-
-                    // Our store expects "Mon", "Tue"... (matches ical 3-letter logic mostly)
-                    if (businessDayMap[dayNameFull]) {
-                        const hour = start.getHours();
-                        // Only sync if within business hours 8-20
-                        if (hour >= 8 && hour <= 20) {
-                            addBooking(
-                                currentBusinessId,
-                                dayNameFull,
-                                hour,
-                                "Google Calendar", // clientName
-                                event.summary || "Busy", // service
-                                "gcal@sync.com" // clientEmail
-                            );
-                            syncedCount++;
-                        }
+                    const hour = start.getHours();
+                    // Only sync if within business hours 8-20
+                    if (hour >= 8 && hour <= 20) {
+                        addBooking(
+                            currentBusinessId,
+                            dayKey,
+                            hour,
+                            "Google Calendar", // clientName
+                            event.summary || "Busy", // service
+                            "gcal@sync.com" // clientEmail
+                        );
+                        syncedCount++;
                     }
                 }
             });
@@ -169,7 +163,8 @@ export function BusinessCalendar() {
         return {
             name: new Intl.DateTimeFormat('es-ES', { weekday: 'short' }).format(d),
             date: d.getDate(),
-            fullDate: d
+            fullDate: d,
+            dayKey: formatDateKey(d)
         };
     });
 
@@ -179,14 +174,13 @@ export function BusinessCalendar() {
     const weekRangeString = `${weekStart.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' })}`;
 
     const handleSlotClick = (dayIndex: number, hour: number) => {
-        const dayMap = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-        const dayName = dayMap[dayIndex];
+        const dayKey = weekDays[dayIndex].dayKey;
 
-        const existingSlot = getSlot(currentBusinessId, dayName, hour);
+        const existingSlot = getSlot(currentBusinessId, dayKey, hour);
 
         // Open modal for ANY slot click, allowing edit or new block
         // Pre-fill modal
-        setSelectedSlot({ day: dayName, hour: hour });
+        setSelectedSlot({ day: dayKey, hour: hour });
         setBlockReason(existingSlot ? (existingSlot.service || "") : ""); // Pre-fill if exists
         setShowBlockModal(true);
     };
@@ -414,16 +408,12 @@ export function BusinessCalendar() {
 
                                 <div>
                                     {HOURS.map(hour => {
-                                        // Mapeamos de nuevo para compatibilidad con el store actual
-                                        // En una versión futura, el store debería usar fechas ISO
-                                        const dayMap = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-                                        const dayName = dayMap[index];
-
-                                        const slot = getSlot(currentBusinessId, dayName, hour);
+                                        const dayKey = day.dayKey;
+                                        const slot = getSlot(currentBusinessId, dayKey, hour);
 
                                         return (
                                             <div
-                                                key={`${dayName}-${hour}`}
+                                                key={`${dayKey}-${hour}`}
                                                 onClick={() => handleSlotClick(index, hour)}
                                                 className={cn(
                                                     "h-24 border-b border-dashed p-1 transition-all cursor-pointer relative group",

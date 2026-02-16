@@ -18,6 +18,14 @@ const timeToHour = (time: string) => {
 
 import { Suspense } from "react";
 
+// Helper to get a stable unique key for a specific date
+const formatDateKey = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 function BookingContent() {
     const searchParams = useSearchParams();
     const urlId = searchParams.get('id');
@@ -81,7 +89,7 @@ function BookingContent() {
         const currentService = availableServices.find(s => s.id === selectedService);
         const serviceName = currentService?.name || "Service";
         const hour = timeToHour(selectedTime);
-        const dayKey = currentDate.toLocaleDateString('en-US', { weekday: 'short' });
+        const dayKey = formatDateKey(currentDate);
 
         // Uses the currently selected business ID and dynamic day
         addBooking(businessId, dayKey, hour, "Guest User", serviceName, guestEmail);
@@ -235,8 +243,8 @@ function BookingContent() {
                                         return h;
                                     })(time);
 
-                                    // Get day key properly (e.g., "Fri") for generic match or date specific
-                                    const dayKey = currentDate.toLocaleDateString('en-US', { weekday: 'short' });
+                                    // Get day key properly (e.g., "2026-02-16")
+                                    const dayKey = formatDateKey(currentDate);
                                     const slot = getSlot(businessId, dayKey, hour);
                                     const isAvailable = !slot;
 

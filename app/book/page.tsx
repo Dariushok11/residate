@@ -35,7 +35,12 @@ function BookingContent() {
     const [selectedTime, setSelectedTime] = React.useState<string | null>(null);
     const [currentDate, setCurrentDate] = React.useState(new Date()); // State for navigation
     const [guestEmail, setGuestEmail] = React.useState("");
+    const [isSendingEmail, setIsSendingEmail] = React.useState(false);
     const [businessId, setBusinessId] = React.useState<string>(urlId || "");
+
+    const isValidEmail = (email: string) => {
+        return email.includes('@') && email.length > 5;
+    };
 
     const { addBooking, getSlot, isHydrated, resetStore } = useBookingStore();
     const { businesses } = useBusinessStore();
@@ -84,15 +89,22 @@ function BookingContent() {
         "6:00 PM", "7:00 PM", "8:00 PM"
     ];
 
-    const handleBooking = () => {
-        if (!selectedService || !selectedTime) return;
+    const handleBooking = async () => {
+        if (!selectedService || !selectedTime || !isValidEmail(guestEmail)) return;
+
+        setIsSendingEmail(true);
         const currentService = availableServices.find(s => s.id === selectedService);
         const serviceName = currentService?.name || "Service";
         const hour = timeToHour(selectedTime);
         const dayKey = formatDateKey(currentDate);
 
         // Uses the currently selected business ID and dynamic day
-        addBooking(businessId, dayKey, hour, "Guest User", serviceName, guestEmail);
+        await addBooking(businessId, dayKey, hour, "Guest User", serviceName, guestEmail);
+
+        // Simulate email sending delay for luxury feel
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        setIsSendingEmail(false);
         setStep("success");
     };
 
@@ -313,8 +325,15 @@ function BookingContent() {
                             </div>
 
                             <div className="pt-4 flex items-center gap-8">
-                                <button onClick={() => setStep("date")} className="btn-link">Edit Time</button>
-                                <Button className="flex-1" onClick={handleBooking} disabled={!guestEmail} size="lg">Finalize Booking</Button>
+                                <button onClick={() => setStep("date")} className="btn-link" disabled={isSendingEmail}>Edit Time</button>
+                                <Button
+                                    className="flex-1"
+                                    onClick={handleBooking}
+                                    disabled={!isValidEmail(guestEmail) || isSendingEmail}
+                                    size="lg"
+                                >
+                                    {isSendingEmail ? "Enviando Confirmación..." : "Finalize Booking"}
+                                </Button>
                             </div>
                         </div>
                     )}
@@ -326,7 +345,10 @@ function BookingContent() {
                             </div>
                             <div className="space-y-4">
                                 <h3 className="text-4xl font-serif text-navy">Confirmed.</h3>
-                                <p className="text-slate text-lg">A confirmation has been sent to your registry.</p>
+                                <p className="text-slate text-lg px-4">
+                                    Hemos enviado un email de confirmación a <br />
+                                    <span className="font-bold text-navy">{guestEmail}</span>
+                                </p>
                             </div>
                             <Button variant="outline" className="mt-8 px-12" onClick={() => window.location.href = "/"} size="lg">Return to Sanctuary</Button>
                         </div>

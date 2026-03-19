@@ -29,10 +29,11 @@ export default function LoginPage() {
             if (response.ok) {
                 alert(`✨ ¡Enviado! Revisa la bandeja de entrada de ${email}.`);
             } else {
-                alert("❌ Hubo un error al enviar el correo. Por favor, inténtalo de nuevo.");
+                const errorData = await response.json();
+                alert(`❌ No se pudo enviar el correo: ${errorData.error || 'Por favor, inténtalo de nuevo.'}`);
             }
-        } catch (error) {
-            alert("❌ No se pudo conectar con el servidor de correos.");
+        } catch (error: any) {
+            alert(`❌ No se pudo conectar con el servidor de correos: ${error.message}`);
         }
     };
 

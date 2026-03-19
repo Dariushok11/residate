@@ -37,7 +37,7 @@ export default function DashboardLayout({
 
                 <nav className="flex-1 p-4 space-y-2">
                     {/* Navigation Items */}
-                    <h4 className="px-2 py-2 text-xs font-bold uppercase tracking-wider opacity-60">Management</h4>
+                    <h4 className="px-2 py-2 text-xs font-bold uppercase tracking-wider opacity-60">Gestión</h4>
 
                     <Link
                         href="/dashboard"
@@ -47,7 +47,7 @@ export default function DashboardLayout({
                             }`}
                     >
                         <LayoutDashboard className="h-4 w-4" />
-                        Overview
+                        Panel
                     </Link>
 
                     <Link
@@ -58,7 +58,7 @@ export default function DashboardLayout({
                             }`}
                     >
                         <Calendar className="h-4 w-4" />
-                        Bookings
+                        Reservas
                     </Link>
 
                     <Link
@@ -69,7 +69,7 @@ export default function DashboardLayout({
                             }`}
                     >
                         <Users className="h-4 w-4" />
-                        Clients
+                        Clientes
                     </Link>
 
                     <Link
@@ -80,7 +80,7 @@ export default function DashboardLayout({
                             }`}
                     >
                         <Settings className="h-4 w-4" />
-                        Settings
+                        Ajustes
                     </Link>
                 </nav>
 
@@ -94,7 +94,7 @@ export default function DashboardLayout({
                         className="flex w-full items-center gap-3 px-3 py-3 text-sm font-medium hover:bg-red-500/10 transition-all text-white/60 hover:text-white"
                     >
                         <LogOut className="h-4 w-4" />
-                        Log Out
+                        Cerrar Sesión
                     </button>
                 </div>
             </aside>
@@ -113,7 +113,7 @@ export default function DashboardLayout({
                     className={`flex flex-col items-center justify-center gap-1 transition-all ${isActive("/dashboard") ? "text-gold" : "text-white/60"}`}
                 >
                     <LayoutDashboard className="h-5 w-5" />
-                    <span className="text-[10px] uppercase tracking-widest font-bold">Overview</span>
+                    <span className="text-[10px] uppercase tracking-widest font-bold">Panel</span>
                 </Link>
 
                 <Link
@@ -121,7 +121,7 @@ export default function DashboardLayout({
                     className={`flex flex-col items-center justify-center gap-1 transition-all ${isActive("/dashboard/calendar") ? "text-gold" : "text-white/60"}`}
                 >
                     <Calendar className="h-5 w-5" />
-                    <span className="text-[10px] uppercase tracking-widest font-bold">Bookings</span>
+                    <span className="text-[10px] uppercase tracking-widest font-bold">Reservas</span>
                 </Link>
 
                 <Link
@@ -129,7 +129,7 @@ export default function DashboardLayout({
                     className={`flex flex-col items-center justify-center gap-1 transition-all ${isActive("/dashboard/clients") ? "text-gold" : "text-white/60"}`}
                 >
                     <Users className="h-5 w-5" />
-                    <span className="text-[10px] uppercase tracking-widest font-bold">Clients</span>
+                    <span className="text-[10px] uppercase tracking-widest font-bold">Clientes</span>
                 </Link>
 
                 <Link
@@ -137,7 +137,7 @@ export default function DashboardLayout({
                     className={`flex flex-col items-center justify-center gap-1 transition-all ${isActive("/dashboard/settings") ? "text-gold" : "text-white/60"}`}
                 >
                     <Settings className="h-5 w-5" />
-                    <span className="text-[10px] uppercase tracking-widest font-bold">Settings</span>
+                    <span className="text-[10px] uppercase tracking-widest font-bold">Ajustes</span>
                 </Link>
             </nav>
         </div>

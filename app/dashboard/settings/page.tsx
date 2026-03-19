@@ -1,10 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Settings as SettingsIcon, Bell, Shield, Palette, Globe, Save } from "lucide-react";
+import { Settings as SettingsIcon, Bell, Shield, Palette, Globe, Save, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useBookingStore, useBusinessStore } from "@/lib/store";
+import { cn } from "@/lib/utils";
 
 const SETTINGS_STORAGE_KEY = 'residate-settings';
 
@@ -14,7 +15,7 @@ interface UserSettings {
     darkMode: boolean;
     highContrast: boolean;
     notifications: boolean;
-    emailNotifications: boolean;
+    emailNotificaciones: boolean;
     twoFactorEnabled: boolean;
 }
 
@@ -24,7 +25,7 @@ const DEFAULT_SETTINGS: UserSettings = {
     darkMode: true,
     highContrast: false,
     notifications: true,
-    emailNotifications: true,
+    emailNotificaciones: true,
     twoFactorEnabled: false
 };
 
@@ -35,7 +36,9 @@ export default function SettingsPage() {
     const [hasChanges, setHasChanges] = useState(false);
     const [apiKey, setApiKey] = useState<string>("");
     const { slots } = useBookingStore();
-    const { businesses, deleteEntireBusiness } = useBusinessStore();
+    const { businesses, deleteEntireBusiness, updateSmartSlots } = useBusinessStore();
+    const [smartSlots, setSmartSlots] = useState<number[]>([]);
+    const [isSavingSmart, setIsSavingSmart] = useState(false);
 
     useEffect(() => {
         const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
@@ -47,10 +50,18 @@ export default function SettingsPage() {
             }
         }
 
-        // Load API key
         const storedApiKey = localStorage.getItem('residate-api-key');
         if (storedApiKey) {
             setApiKey(storedApiKey);
+        }
+
+        // Load Smart Slots for the current business
+        const bId = localStorage.getItem('registered_business_id');
+        if (bId) {
+            const business = businesses.find(b => b.id === bId);
+            if (business && business.smartSlots) {
+                setSmartSlots(business.smartSlots);
+            }
         }
 
         // Listen for storage events (cross-tab sync)
@@ -98,7 +109,7 @@ export default function SettingsPage() {
         alert("✨ Settings saved successfully!");
     };
 
-    const handleDeactivate = async () => {
+    const handleDesactivar = async () => {
         const bId = localStorage.getItem('registered_business_id');
         if (!bId) {
             alert("❌ No se encontró la sesión activa. Por favor, intenta iniciar sesión de nuevo.");
@@ -268,16 +279,16 @@ export default function SettingsPage() {
 
     const handleEnable2FA = () => {
         if (settings.twoFactorEnabled) {
-            if (confirm("Are you sure you want to disable Two-Factor Authentication?")) {
+            if (confirm("Are you sure you want to disable Autenticación de Dos Factores?")) {
                 updateSetting('twoFactorEnabled', false);
                 alert("🔓 2FA has been disabled.");
             }
         } else {
-            alert("🔐 Configuring Two-Factor Authentication...");
+            alert("🔐 Configuring Autenticación de Dos Factores...");
             const code = prompt("Please enter the 6-digit verification code sent to your email to confirm:");
             if (code && code.length === 6) {
                 updateSetting('twoFactorEnabled', true);
-                alert("✅ Two-Factor Authentication enabled successfully!");
+                alert("✅ Autenticación de Dos Factores enabled successfully!");
             } else if (code) {
                 alert("❌ Invalid code. Please try again.");
             } else {
@@ -308,20 +319,59 @@ export default function SettingsPage() {
     };
 
     const tabs = [
-        { icon: SettingsIcon, label: "Profile" },
-        { icon: Bell, label: "Notifications" },
-        { icon: Shield, label: "Security" },
-        { icon: Palette, label: "Aesthetics" },
-        { icon: Globe, label: "Connectivity" },
+        { icon: SettingsIcon, label: "Perfil" },
+        { icon: Bell, label: "Notificaciones" },
+        { icon: Shield, label: "Seguridad" },
+        { icon: Sparkles, label: "Smart Reserve™" },
+        { icon: Palette, label: "Estética" },
+        { icon: Globe, label: "Conectividad" },
     ];
+
+    const timeOptions = [
+        "8:00 AM", "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
+        "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM",
+        "6:00 PM", "7:00 PM", "8:00 PM"
+    ];
+
+    const timeToHour = (time: string) => {
+        const [t, period] = time.split(' ');
+        let [h] = t.split(':').map(Number);
+        if (period === 'PM' && h !== 12) h += 12;
+        if (period === 'AM' && h === 12) h = 0;
+        return h;
+    };
+
+    const toggleSmartSlot = (hour: number) => {
+        setSmartSlots(prev =>
+            prev.includes(hour)
+                ? prev.filter(h => h !== hour)
+                : [...prev, hour].sort((a, b) => a - b)
+        );
+        setHasChanges(true); // Treat as general change
+    };
+
+    const handleSaveSmartReserve = async () => {
+        const bId = localStorage.getItem('registered_business_id');
+        if (!bId) return;
+
+        setIsSavingSmart(true);
+        const result = await updateSmartSlots(bId, smartSlots);
+        setIsSavingSmart(false);
+
+        if (result && 'success' in result) {
+            alert("✨ Perfil Smart Reserve™ actualizado.");
+        } else {
+            alert("Error: " + (result?.error || "Desconocido"));
+        }
+    };
 
     return (
         <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-700">
             {/* Page Header */}
             <div className="flex flex-col md-flex-row md-items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-serif text-navy">Registry Settings</h1>
-                    <p className="text-slate italic">Calibrate your personal sanctuary experience.</p>
+                    <h1 className="text-3xl font-serif text-navy">Ajustes del Registro</h1>
+                    <p className="text-slate italic">Calibra tu experiencia en el santuario personal.</p>
                 </div>
                 <div className="flex gap-3">
                     <Button
@@ -329,7 +379,7 @@ export default function SettingsPage() {
                         variant="ghost"
                         className="text-red-500 hover:bg-red-50 hover:text-red-600 border border-red-200"
                     >
-                        Delete Business
+                        Eliminar Negocio
                     </Button>
                     <Button
                         onClick={handleSave}
@@ -337,7 +387,7 @@ export default function SettingsPage() {
                         className={`flex items-center gap-2 ${!hasChanges ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <Save className="h-4 w-4" />
-                        {hasChanges ? 'Save Changes' : 'No Changes'}
+                        {hasChanges ? 'Guardar Cambios' : 'Sin Cambios'}
                     </Button>
                 </div>
             </div>
@@ -364,13 +414,13 @@ export default function SettingsPage() {
                 <div className="lg-col-span-3 space-y-8">
                     <div className="bg-white p-8 shadow-2xl border border-navy/5 space-y-10">
 
-                        {/* Profile Tab */}
+                        {/* Perfil Tab */}
                         {activeTab === 0 && (
                             <section className="space-y-6 animate-in fade-in">
-                                <h3 className="text-lg font-serif text-navy border-b border-navy/5 pb-4">Personal Sanctuary</h3>
+                                <h3 className="text-lg font-serif text-navy border-b border-navy/5 pb-4">Santuario Personal</h3>
                                 <div className="grid grid-cols-1 md-grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold uppercase tracking-widest text-slate opacity-60">Full Name</label>
+                                        <label className="text-xs font-bold uppercase tracking-widest text-slate opacity-60">Nombre Completo</label>
                                         <input
                                             type="text"
                                             value={settings.fullName}
@@ -379,7 +429,7 @@ export default function SettingsPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold uppercase tracking-widest text-slate opacity-60">Email Address</label>
+                                        <label className="text-xs font-bold uppercase tracking-widest text-slate opacity-60">Correo Electrónico</label>
                                         <input
                                             type="email"
                                             value={settings.email}
@@ -391,10 +441,10 @@ export default function SettingsPage() {
                             </section>
                         )}
 
-                        {/* Notifications Tab */}
+                        {/* Notificaciones Tab */}
                         {activeTab === 1 && (
                             <section className="space-y-6 animate-in fade-in">
-                                <h3 className="text-lg font-serif text-navy border-b border-navy/5 pb-4">Notification Preferences</h3>
+                                <h3 className="text-lg font-serif text-navy border-b border-navy/5 pb-4">Preferencias de Notificación</h3>
                                 <div className="space-y-4">
                                     <label
                                         onClick={() => updateSetting('notifications', !settings.notifications)}
@@ -404,37 +454,37 @@ export default function SettingsPage() {
                                             <div className={`h-4 w-4 rounded-full border-2 border-gold flex items-center justify-center p-0.5 ${!settings.notifications && 'opacity-20'}`}>
                                                 {settings.notifications && <div className="h-full w-full bg-gold rounded-full"></div>}
                                             </div>
-                                            <span className="text-sm font-serif text-navy">Push Notifications</span>
+                                            <span className="text-sm font-serif text-navy">Notificaciones Push</span>
                                         </div>
                                         <span className={`text-[10px] font-bold uppercase tracking-widest ${settings.notifications ? 'text-gold' : 'text-slate opacity-40'}`}>
-                                            {settings.notifications ? 'Enabled' : 'Disabled'}
+                                            {settings.notifications ? 'Habilitado' : 'Deshabilitado'}
                                         </span>
                                     </label>
                                     <label
-                                        onClick={() => updateSetting('emailNotifications', !settings.emailNotifications)}
+                                        onClick={() => updateSetting('emailNotificaciones', !settings.emailNotificaciones)}
                                         className="flex items-center justify-between p-4 bg-cream cursor-pointer group hover:bg-navy/5 transition-all"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <div className={`h-4 w-4 rounded-full border-2 border-gold flex items-center justify-center p-0.5 ${!settings.emailNotifications && 'opacity-20'}`}>
-                                                {settings.emailNotifications && <div className="h-full w-full bg-gold rounded-full"></div>}
+                                            <div className={`h-4 w-4 rounded-full border-2 border-gold flex items-center justify-center p-0.5 ${!settings.emailNotificaciones && 'opacity-20'}`}>
+                                                {settings.emailNotificaciones && <div className="h-full w-full bg-gold rounded-full"></div>}
                                             </div>
-                                            <span className="text-sm font-serif text-navy">Email Notifications</span>
+                                            <span className="text-sm font-serif text-navy">Notificaciones por Email</span>
                                         </div>
-                                        <span className={`text-[10px] font-bold uppercase tracking-widest ${settings.emailNotifications ? 'text-gold' : 'text-slate opacity-40'}`}>
-                                            {settings.emailNotifications ? 'Enabled' : 'Disabled'}
+                                        <span className={`text-[10px] font-bold uppercase tracking-widest ${settings.emailNotificaciones ? 'text-gold' : 'text-slate opacity-40'}`}>
+                                            {settings.emailNotificaciones ? 'Habilitado' : 'Deshabilitado'}
                                         </span>
                                     </label>
                                 </div>
                             </section>
                         )}
 
-                        {/* Security Tab */}
+                        {/* Seguridad Tab */}
                         {activeTab === 2 && (
                             <section className="space-y-6 animate-in fade-in">
-                                <h3 className="text-lg font-serif text-navy border-b border-navy/5 pb-4">Security & Privacy</h3>
+                                <h3 className="text-lg font-serif text-navy border-b border-navy/5 pb-4">Seguridad y Privacidad</h3>
                                 <div className="space-y-4">
                                     <div className={`p-6 bg-cream border-l-4 ${settings.twoFactorEnabled ? 'border-green-500' : 'border-gold'}`}>
-                                        <h4 className="font-serif text-navy mb-2">Two-Factor Authentication</h4>
+                                        <h4 className="font-serif text-navy mb-2">Autenticación de Dos Factores</h4>
                                         <p className="text-sm text-slate mb-4">
                                             {settings.twoFactorEnabled
                                                 ? "Your account is secured with 2FA."
@@ -450,18 +500,69 @@ export default function SettingsPage() {
                                         </Button>
                                     </div>
                                     <div className="p-6 bg-cream">
-                                        <h4 className="font-serif text-navy mb-2">Change Password</h4>
+                                        <h4 className="font-serif text-navy mb-2">Cambiar Contraseña</h4>
                                         <p className="text-sm text-slate mb-4">Update your password regularly for better security.</p>
-                                        <Button onClick={handleUpdatePassword} variant="outline" size="sm">Update Password</Button>
+                                        <Button onClick={handleUpdatePassword} variant="outline" size="sm">Actualizar Contraseña</Button>
                                     </div>
                                 </div>
                             </section>
                         )}
 
-                        {/* Aesthetics Tab */}
+                        {/* Smart Reserve™ Tab */}
                         {activeTab === 3 && (
                             <section className="space-y-6 animate-in fade-in">
-                                <h3 className="text-lg font-serif text-navy border-b border-navy/5 pb-4">Aesthetic Preferences</h3>
+                                <div className="flex justify-between items-center border-b border-navy/5 pb-4">
+                                    <h3 className="text-lg font-serif text-navy">Algoritmo Smart Reserve™</h3>
+                                    <Button
+                                        onClick={handleSaveSmartReserve}
+                                        size="sm"
+                                        disabled={isSavingSmart}
+                                        className="bg-gold hover:bg-gold/90 text-white border-none"
+                                    >
+                                        <Sparkles className="mr-2 h-4 w-4" />
+                                        {isSavingSmart ? "Guardando..." : "Actualizar Estrategia"}
+                                    </Button>
+                                </div>
+
+                                <p className="text-sm text-slate leading-relaxed">
+                                    Selecciona las horas que el sistema marcará como <strong className="text-gold">Recomendado</strong> para los usuarios.
+                                    Esto ayuda a balancear la carga de tu negocio y a mostrar mayor exclusividad.
+                                </p>
+
+                                <div className="grid grid-cols-2 md-grid-cols-4 gap-3 pt-4">
+                                    {timeOptions.map(time => {
+                                        const hour = timeToHour(time);
+                                        const isSelected = smartSlots.includes(hour);
+                                        return (
+                                            <button
+                                                key={time}
+                                                onClick={() => toggleSmartSlot(hour)}
+                                                className={cn(
+                                                    "p-4 border text-xs font-bold tracking-widest uppercase transition-all flex flex-col items-center gap-1",
+                                                    isSelected
+                                                        ? "bg-navy text-white border-navy"
+                                                        : "bg-cream border-transparent text-navy hover:border-navy/20"
+                                                )}
+                                            >
+                                                <span>{time}</span>
+                                                {isSelected && <Sparkles className="h-3 w-3 text-gold" />}
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                                <div className="p-6 bg-slate-50 border border-slate-100 rounded-sm">
+                                    <h5 className="text-xs font-bold uppercase tracking-widest text-navy mb-2">Impacto Predictivo</h5>
+                                    <p className="text-[11px] text-slate font-light italic">
+                                        Las horas seleccionadas recibirán un indicador visual 'Premium'. Los clientes tienen un 24% más de probabilidad de reservar en horarios sugeridos.
+                                    </p>
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Estética Tab */}
+                        {activeTab === 4 && (
+                            <section className="space-y-6 animate-in fade-in">
+                                <h3 className="text-lg font-serif text-navy border-b border-navy/5 pb-4">Preferencias Estéticas</h3>
                                 <div className="space-y-4">
                                     <label
                                         onClick={() => updateSetting('darkMode', !settings.darkMode)}
@@ -471,10 +572,10 @@ export default function SettingsPage() {
                                             <div className={`h-4 w-4 rounded-full border-2 border-gold flex items-center justify-center p-0.5 ${!settings.darkMode && 'opacity-20'}`}>
                                                 {settings.darkMode && <div className="h-full w-full bg-gold rounded-full"></div>}
                                             </div>
-                                            <span className="text-sm font-serif text-navy">Dark Mode Portfolio</span>
+                                            <span className="text-sm font-serif text-navy">Portfolio en Modo Oscuro</span>
                                         </div>
                                         <span className={`text-[10px] font-bold uppercase tracking-widest ${settings.darkMode ? 'text-gold' : 'text-slate opacity-40'}`}>
-                                            {settings.darkMode ? 'Enabled' : 'Disabled'}
+                                            {settings.darkMode ? 'Habilitado' : 'Deshabilitado'}
                                         </span>
                                     </label>
                                     <label
@@ -485,23 +586,23 @@ export default function SettingsPage() {
                                             <div className={`h-4 w-4 rounded-full border-2 border-gold flex items-center justify-center p-0.5 ${!settings.highContrast && 'opacity-20'}`}>
                                                 {settings.highContrast && <div className="h-full w-full bg-gold rounded-full"></div>}
                                             </div>
-                                            <span className="text-sm font-serif text-navy">High Contrast Graphics</span>
+                                            <span className="text-sm font-serif text-navy">Gráficos de Alto Contraste</span>
                                         </div>
                                         <span className={`text-[10px] font-bold uppercase tracking-widest ${settings.highContrast ? 'text-gold' : 'text-slate opacity-40'}`}>
-                                            {settings.highContrast ? 'Enabled' : 'Disabled'}
+                                            {settings.highContrast ? 'Habilitado' : 'Deshabilitado'}
                                         </span>
                                     </label>
                                 </div>
                             </section>
                         )}
 
-                        {/* Connectivity Tab */}
-                        {activeTab === 4 && (
+                        {/* Conectividad Tab */}
+                        {activeTab === 5 && (
                             <section className="space-y-6 animate-in fade-in">
-                                <h3 className="text-lg font-serif text-navy border-b border-navy/5 pb-4">Connectivity & Integrations</h3>
+                                <h3 className="text-lg font-serif text-navy border-b border-navy/5 pb-4">Conectividad e Integraciones</h3>
                                 <div className="space-y-4">
                                     <div className="p-6 bg-cream">
-                                        <h4 className="font-serif text-navy mb-2">Calendar Sync</h4>
+                                        <h4 className="font-serif text-navy mb-2">Sincronización de Calendario</h4>
                                         <p className="text-sm text-slate mb-4">Export your bookings to .ics format for Google Calendar, Outlook, or iCal.</p>
                                         <Button
                                             onClick={handleCalendarExport}
@@ -512,7 +613,7 @@ export default function SettingsPage() {
                                         </Button>
                                     </div>
                                     <div className="p-6 bg-cream">
-                                        <h4 className="font-serif text-navy mb-2">API Access</h4>
+                                        <h4 className="font-serif text-navy mb-2">Acceso a la API</h4>
                                         <p className="text-sm text-slate mb-4">Generate API keys for third-party integrations.</p>
                                         {apiKey ? (
                                             <div className="space-y-2">
@@ -525,7 +626,7 @@ export default function SettingsPage() {
                                                         }}
                                                         className="text-gold hover:text-navy transition-colors"
                                                     >
-                                                        Copy
+                                                        Copiar
                                                     </button>
                                                 </div>
                                                 <Button
@@ -533,7 +634,7 @@ export default function SettingsPage() {
                                                     variant="outline"
                                                     size="sm"
                                                 >
-                                                    Regenerate Key
+                                                    Regenerar Clave
                                                 </Button>
                                             </div>
                                         ) : (
@@ -542,12 +643,12 @@ export default function SettingsPage() {
                                                 variant="outline"
                                                 size="sm"
                                             >
-                                                Generate API Key
+                                                Generar Clave API
                                             </Button>
                                         )}
                                     </div>
                                     <div className="p-6 bg-cream">
-                                        <h4 className="font-serif text-navy mb-2">Data Export</h4>
+                                        <h4 className="font-serif text-navy mb-2">Exportar Datos</h4>
                                         <p className="text-sm text-slate mb-4">Download all your bookings and client data as JSON.</p>
                                         <Button
                                             onClick={handleDataExport}
@@ -579,15 +680,15 @@ export default function SettingsPage() {
 
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h4 className="text-sm font-serif text-red-500">Deactivate Registry</h4>
+                                    <h4 className="text-sm font-serif text-red-500">Desactivar Registro</h4>
                                     <p className="text-xs text-slate mt-1">This will permanently erase your access and data history.</p>
                                 </div>
                                 <Button
-                                    onClick={handleDeactivate}
+                                    onClick={handleDesactivar}
                                     variant="ghost"
                                     className="text-red-500 hover:bg-red-500/10 border border-red-500/20"
                                 >
-                                    Deactivate
+                                    Desactivar
                                 </Button>
                             </div>
                         </section>

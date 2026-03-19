@@ -8,7 +8,7 @@ import * as React from "react";
 export default function DashboardPage() {
     const { slots, isHydrated } = useBookingStore();
     const { businesses } = useBusinessStore();
-    const [businessName, setBusinessName] = React.useState("Your Sanctuary");
+    const [businessName, setBusinessName] = React.useState("Tu Santuario");
     const [businessId, setBusinessId] = React.useState<string | null>(null);
 
     React.useEffect(() => {
@@ -68,13 +68,13 @@ export default function DashboardPage() {
             {/* Page Header */}
             <div className="flex flex-col md-flex-row md-items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-serif text-navy">Registry Overview</h1>
-                    <p className="text-slate italic">Welcome back to the sanctuary, {businessName}.</p>
+                    <h1 className="text-3xl font-serif text-navy">Vista General del Registro</h1>
+                    <p className="text-slate italic">Bienvenido de nuevo al santuario, {businessName}.</p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="outline" onClick={handleExport}>Export Portfolio</Button>
+                    <Button variant="outline" onClick={handleExport}>Exportar Portfolio</Button>
                     <Link href="/book">
-                        <Button>New Appointment</Button>
+                        <Button>Nueva Cita</Button>
                     </Link>
                 </div>
             </div>
@@ -82,7 +82,7 @@ export default function DashboardPage() {
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md-grid-cols-3 gap-6">
                 <div className="bg-white p-8 shadow-2xl border border-navy/5">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-slate opacity-60">Total Revenue</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-slate opacity-60">Ingresos Totales</h3>
                     <div className="mt-4 flex items-end justify-between">
                         <span className="text-4xl font-serif text-navy">${revenue.toLocaleString()}</span>
                         <span className="text-sm text-green-600 font-medium">+12%</span>
@@ -90,7 +90,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="bg-white p-8 shadow-2xl border border-navy/5">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-slate opacity-60">Active Bookings</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-slate opacity-60">Reservas Activas</h3>
                     <div className="mt-4 flex items-end justify-between">
                         <span className="text-4xl font-serif text-navy">{filteredSlots.length}</span>
                         <span className="text-sm text-slate">Total</span>
@@ -98,10 +98,10 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="bg-white p-8 shadow-2xl border border-navy/5">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-slate opacity-60">Pending Requests</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-slate opacity-60">Solicitudes Pendientes</h3>
                     <div className="mt-4 flex items-end justify-between">
                         <span className="text-4xl font-serif text-gold">{pendingCount}</span>
-                        <span className="text-sm text-slate">Requires Action</span>
+                        <span className="text-sm text-slate">Requiere Acción</span>
                     </div>
                 </div>
             </div>
@@ -109,11 +109,11 @@ export default function DashboardPage() {
             {/* Recent Activity Section */}
             <div className="bg-white border border-[var(--border-subtle)]">
                 <div className="p-6 border-b border-[var(--border-subtle)]">
-                    <h3 className="text-lg font-serif">Recent Boarding</h3>
+                    <h3 className="text-lg font-serif">Registro Reciente</h3>
                 </div>
                 <div className="p-0">
                     {filteredSlots.length === 0 ? (
-                        <div className="p-12 text-center text-slate italic opacity-40">No entries in the boarding ledger yet.</div>
+                        <div className="p-12 text-center text-slate italic opacity-40">Aún no hay entradas en el registro.</div>
                     ) : (
                         filteredSlots.sort((a, b) => b.timestamp - a.timestamp).map((slot) => (
                             <div key={slot.id} className="flex items-center justify-between p-6 border-b border-[var(--border-subtle)] last:border-0 hover:bg-gray-50 transition-colors">

@@ -270,6 +270,14 @@ img {
     left: 1rem;
 }
 
+.left-6 {
+    left: 1.5rem !important;
+}
+
+.left-8 {
+    left: 2rem !important;
+}
+
 .right-0 {
     right: 0;
 }
@@ -340,6 +348,18 @@ img {
     padding-left: 3rem;
 }
 
+.pl-16 {
+    padding-left: 4rem !important;
+}
+
+.pl-18 {
+    padding-left: 4.5rem !important;
+}
+
+.pl-20 {
+    padding-left: 5rem !important;
+}
+
 .px-3 {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
@@ -365,6 +385,11 @@ img {
     padding-bottom: 0.75rem;
 }
 
+.py-6 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+}
+
 .py-12 {
     padding-top: 3rem;
     padding-bottom: 3rem;
@@ -373,6 +398,10 @@ img {
 .py-24 {
     padding-top: 6rem;
     padding-bottom: 6rem;
+}
+
+.pr-6 {
+    padding-right: 1.5rem !important;
 }
 
 .border-b {
@@ -843,6 +872,40 @@ img {
     transform: translateY(-50%);
 }
 
+.group:hover .group-hover\:opacity-100 {
+    opacity: 1;
+}
+
+.group:hover .group-hover\:text-gold {
+    color: var(--color-gold);
+}
+
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.aspect-\[3\/4\] {
+    aspect-ratio: 3 / 4;
+}
+
+.group:hover .group-hover\:scale-105 {
+    transform: scale(1.05);
+}
+
+.transition-transform {
+    transition-property: transform;
+}
+
+.duration-700 {
+    transition-duration: 700ms;
+}
+
+.ease-out {
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
 .group-hover\:translate-x-1:hover {
     transform: translateX(0.25rem);
 }
@@ -994,12 +1057,60 @@ img {
         border-radius: 0.75rem;
     }
 
+    @media (min-width: 640px) {
+        .sm-flex-row {
+            flex-direction: row;
+        }
+
+        .sm-w-auto {
+            width: auto;
+        }
+    }
+
     .md-block {
         display: block;
     }
 
     .md-grid-cols-8 {
         grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+
+    .md-grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .md-flex-row {
+        flex-direction: row;
+    }
+
+    .md-flex {
+        display: flex;
+    }
+
+    .md-items-end {
+        align-items: flex-end;
+    }
+
+    .md-gap-12 {
+        gap: 3rem;
+    }
+
+    .md-px-6 {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    .md-p-12 {
+        padding: 3rem;
+    }
+
+    .md-text-7xl {
+        font-size: 4.5rem;
+        line-height: 1;
+    }
+
+    .md-text-xl {
+        font-size: 1.25rem;
     }
 
     .md-min-w-100 {
@@ -1172,4 +1283,29 @@ input::placeholder {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+
+
+
+.pl-24 {
+    padding-left: 6rem !important;
+}
+
+.-translate-y-1\/2 {
+    transform: translateY(-50%);
+}
+
+/* Aurelia Chatbot */
+@keyframes aurelia-ping {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    75%,
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
 }

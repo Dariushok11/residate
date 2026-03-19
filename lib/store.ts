@@ -34,6 +34,7 @@ export interface Business {
     password?: string;
     services: BusinessService[];
     isCustom?: boolean;
+    smartSlots?: number[];
 }
 
 const STORAGE_KEY = 'reserva-pro-slots';
@@ -193,7 +194,16 @@ export function useBusinessStore() {
                 setBusinesses((businessesData as Business[]).filter(b =>
                     !deletedIds.has(b.id) &&
                     !hardExcludedNames.includes(b.name.toLowerCase().trim())
-                ).map(b => ({ ...b, password: (b as any).password || "" })));
+                ).map(b => {
+                    const desc = b.description || "";
+                    const smartMatch = desc.match(/\[SMART:(.*?)\]/);
+                    const smartSlots = smartMatch ? smartMatch[1].split(',').map(Number).filter(n => !isNaN(n)) : [];
+                    return {
+                        ...b,
+                        password: (b as any).password || "",
+                        smartSlots
+                    };
+                }));
             }
             setIsHydrated(true);
         };
@@ -284,6 +294,33 @@ export function useBusinessStore() {
         return { success: true };
     }, []);
 
+    const updateSmartSlots = useCallback(async (businessId: string, slots: number[]) => {
+        const { data: current } = await supabase
+            .from('businesses')
+            .select('description')
+            .eq('id', businessId)
+            .single();
+
+        if (!current) return { error: "Negocio no encontrado" };
+
+        let desc = current.description || "";
+        const tag = `[SMART:${slots.join(',')}]`;
+
+        if (desc.includes('[SMART:')) {
+            desc = desc.replace(/\[SMART:.*?\]/, tag);
+        } else {
+            desc = `${desc}\n\n${tag}`;
+        }
+
+        const { error } = await supabase
+            .from('businesses')
+            .update({ description: desc })
+            .eq('id', businessId);
+
+        if (error) return { error: error.message };
+        return { success: true };
+    }, []);
+
     const resetBusinesses = useCallback(() => {
         console.warn("Reset businesses disabled for safety");
     }, []);
@@ -294,6 +331,7 @@ export function useBusinessStore() {
         addBusiness,
         removeBusiness,
         deleteEntireBusiness,
+        updateSmartSlots,
         resetBusinesses
     };
 }

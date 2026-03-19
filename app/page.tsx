@@ -49,7 +49,7 @@ export default function Home() {
                             <Button variant="ghost" className="inline-flex px-3 sm:px-4 text-xs sm:text-sm">Acceder</Button>
                         </Link>
                         <Link href="/book">
-                            <Button>Book Now</Button>
+                            <Button>Reservar Ahora</Button>
                         </Link>
                     </div>
                 </div>
@@ -71,11 +71,11 @@ export default function Home() {
 
                         <div className="flex flex-col sm-flex-row gap-4 mt-8 justify-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300 fill-mode-forwards opacity-0" style={{ animationFillMode: 'forwards' }}>
                             <Link href="/book">
-                                <Button size="lg" className="btn-hero w-full sm-w-auto hover:scale-105 transition-transform duration-300">Book Now</Button>
+                                <Button size="lg" className="btn-hero w-full sm-w-auto hover:scale-105 transition-transform duration-300">Reservar Ahora</Button>
                             </Link>
                             {hasBusiness && (
                                 <Link href="/dashboard">
-                                    <Button size="lg" className="btn-hero w-full sm-w-auto hover:scale-105 transition-transform duration-300">Access Portfolio</Button>
+                                    <Button size="lg" className="btn-hero w-full sm-w-auto hover:scale-105 transition-transform duration-300">Acceder al Panel</Button>
                                 </Link>
                             )}
                         </div>
@@ -89,19 +89,20 @@ export default function Home() {
                     <div className="container px-4 md-px-6">
                         <div className="flex flex-col md-flex-row md-items-end justify-between mb-16 gap-8">
                             <div className="space-y-4">
-                                <h3 className="text-3xl font-serif text-[var(--text-primary)]">The Art of reserve</h3>
+                                <h3 className="text-3xl font-serif text-[var(--text-primary)]">El Arte de Reservar</h3>
                                 <div className="h-0.5 w-16 bg-[var(--color-gold)]"></div>
                             </div>
 
                             {/* Search Bar */}
-                            <div className="relative w-full md-max-w-600 group mx-auto">
-                                <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-6 w-6 text-navy opacity-40 group-focus-within:opacity-100 transition-opacity" />
+                            <div className="relative w-full md-max-w-600 group mx-auto search-container">
+                                <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-6 w-6 text-navy opacity-40 group-focus-within:opacity-100 transition-opacity z-10" />
                                 <input
                                     type="text"
                                     placeholder="Buscar Negocios"
+                                    style={{ paddingLeft: '80px' }}
+                                    className="w-full bg-[var(--bg-secondary)] border border-navy py-6 pr-6 text-2xl tracking-widest focus:outline-none transition-all font-light placeholder:opacity-20 uppercase"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full bg-[var(--bg-secondary)] border border-navy py-6 pl-18 pr-6 text-2xl tracking-widest focus:outline-none transition-all font-light placeholder:opacity-20 uppercase"
                                 />
                             </div>
                         </div>
@@ -116,14 +117,14 @@ export default function Home() {
                                     >
                                         <div className="aspect-[3/4] bg-[var(--bg-secondary)] relative overflow-hidden mb-6">
                                             <div className="absolute inset-0 bg-gray-200 group-hover:scale-105 transition-transform duration-700 ease-out flex items-center justify-center p-4">
-                                                <span className="text-navy font-serif opacity-20 text-xs italic tracking-widest uppercase">Luxury Preview</span>
+                                                <span className="text-navy font-serif opacity-20 text-xs italic tracking-widest uppercase">Vista Previa</span>
                                             </div>
                                         </div>
                                         <div className="space-y-1 text-center">
                                             <h4 className="text-xl font-serif text-navy">{business.name}</h4>
                                             <p className="text-[10px] text-gold uppercase tracking-[0.2em] font-medium">{business.category} • {business.location}</p>
                                             <p className="text-sm text-slate font-light italic opacity-70 mt-3 line-clamp-2 max-w-[280px] mx-auto px-4 leading-relaxed">"{stripPassword(business.description)}"</p>
-                                            <p className="text-[10px] font-bold pt-5 text-navy opacity-30 group-hover:opacity-100 group-hover:text-gold transition-all uppercase tracking-[0.4em]">Discover</p>
+                                            <p className="text-[10px] font-bold pt-5 text-navy opacity-30 group-hover:opacity-100 group-hover:text-gold transition-all uppercase tracking-[0.4em]">Descubrir</p>
                                         </div>
                                     </Link>
                                 ))
@@ -131,8 +132,8 @@ export default function Home() {
                                 <div className="col-span-1 md-col-span-3 py-20 text-center space-y-4">
                                     <p className="text-xl font-serif text-slate opacity-40 italic">
                                         {searchTerm
-                                            ? "No sanctuaries found matching your search."
-                                            : "Our directory is awaiting its first sanctuary."}
+                                            ? "No se encontraron negocios que coincidan con tu búsqueda."
+                                            : "Nuestro directorio está esperando su primer negocio."}
                                     </p>
                                     {searchTerm ? (
                                         <button
@@ -171,7 +172,7 @@ export default function Home() {
             <footer className="border-t border-[var(--border-subtle)] py-12 md:py-24 bg-[var(--bg-primary)]">
                 <div className="container px-4 md-px-6 flex flex-col md-flex-row justify-between items-center gap-8 md-gap-0">
                     <div className="text-2xl font-serif uppercase tracking-widest">ResiDate</div>
-                    <p className="text-sm text-[var(--text-secondary)]">© 2026 ResiDate. All rights reserved.</p>
+                    <p className="text-sm text-[var(--text-secondary)]">© 2026 ResiDate. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </div>

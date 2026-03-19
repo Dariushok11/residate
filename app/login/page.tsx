@@ -53,11 +53,9 @@ export default function LoginPage() {
                 const pwdMatch = data.description?.match(/\[PWD:(.*?)\]/);
                 const storedPassword = pwdMatch ? pwdMatch[1] : null;
 
-                // Verify password
-                // If the business was created before we added passwords, it might not have one.
-                // In that case, we allow entry (or we could enforce it, but let's be graceful).
-                if (storedPassword && password !== storedPassword) {
-                    alert("❌ La contraseña (Secret Key) es incorrecta.");
+                // Enforce strict password verification for all businesses (old and new)
+                if (password !== storedPassword) {
+                    alert("❌ La contraseña (Llave Secreta) es incorrecta o no ha sido configurada.");
                     setIsLoading(false);
                     return;
                 }
@@ -88,15 +86,15 @@ export default function LoginPage() {
                     </Link>
                     <div className="space-y-4">
                         <h1 className="text-3xl font-serif text-gold tracking-widest uppercase">ResiDate</h1>
-                        <p className="text-white/60 text-sm uppercase tracking-widest">Client Portal</p>
+                        <p className="text-white/60 text-sm uppercase tracking-widest">Portal del Socio</p>
                     </div>
                 </div>
 
                 {/* Form Section */}
                 <div className="p-12 space-y-8">
                     <div className="space-y-2 text-center">
-                        <h2 className="text-2xl font-serif text-navy">Welcome Back</h2>
-                        <p className="text-slate italic">Enter your credentials to access your sanctuary.</p>
+                        <h2 className="text-2xl font-serif text-navy">Bienvenido de nuevo</h2>
+                        <p className="text-slate italic">Introduce tus credenciales para acceder a tu santuario.</p>
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6">
@@ -105,7 +103,7 @@ export default function LoginPage() {
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate/50" />
                                 <input
                                     type="email"
-                                    placeholder="Registry Email"
+                                    placeholder="Email del Registro"
                                     className="w-full bg-cream border-none p-4 pl-12 text-sm focus:ring-1 focus:ring-gold outline-none transition-all font-serif"
                                     required
                                     value={email}
@@ -116,7 +114,7 @@ export default function LoginPage() {
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate/50" />
                                 <input
                                     type="password"
-                                    placeholder="Secret Key"
+                                    placeholder="Llave Secreta"
                                     className="w-full bg-cream border-none p-4 pl-12 text-sm focus:ring-1 focus:ring-gold outline-none transition-all font-serif"
                                     required
                                     value={password}
@@ -128,16 +126,16 @@ export default function LoginPage() {
                         <div className="flex justify-between items-center text-xs">
                             <label className="flex items-center gap-2 cursor-pointer text-slate">
                                 <input type="checkbox" className="accent-gold h-3 w-3" />
-                                <span>Remember Registry</span>
+                                <span>Recordar Acceso</span>
                             </label>
-                            <a href="#" onClick={handleForgotKey} className="text-gold hover:text-navy transition-colors font-medium">Forgot Key?</a>
+                            <a href="#" onClick={handleForgotKey} className="text-gold hover:text-navy transition-colors font-medium">¿Olvidaste tu llave?</a>
                         </div>
 
                         <Button
                             className="w-full flex items-center justify-center gap-2 group"
                             disabled={isLoading}
                         >
-                            {isLoading ? "Validating..." : "Sign In to Registry"}
+                            {isLoading ? "Validando..." : "Acceder al Registro"}
                             {!isLoading && <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />}
                         </Button>
                     </form>

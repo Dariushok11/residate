@@ -17,7 +17,7 @@ export default function BusinessRegistrationPage() {
         category: "wellness",
         description: "",
         services: [
-            { id: '1', name: 'Signature Service', price: 150, duration: 60 }
+            { id: '1', name: 'Servicio Signature', price: 150, duration: 60 }
         ]
     });
     const [error, setError] = React.useState<string | null>(null);
@@ -86,9 +86,9 @@ export default function BusinessRegistrationPage() {
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <Link href="/" className="flex items-center gap-2 text-navy hover:opacity-70 transition-opacity">
                         <ArrowLeft className="w-5 h-5" />
-                        <span className="text-sm font-medium uppercase tracking-widest">Back to Discovery</span>
+                        <span className="text-sm font-medium uppercase tracking-widest">Volver al Inicio</span>
                     </Link>
-                    <div className="text-xl font-serif uppercase tracking-widest text-navy">Partner Portal</div>
+                    <div className="text-xl font-serif uppercase tracking-widest text-navy">Portal de Socios</div>
                 </div>
             </header>
 
@@ -111,12 +111,12 @@ export default function BusinessRegistrationPage() {
                     {step === 1 && (
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <h2 className="text-3xl font-serif text-navy">Welcome, Partner</h2>
-                                <p className="text-slate font-light">Let's begin by establishing your sanctuary's core identity.</p>
+                                <h2 className="text-3xl font-serif text-navy">Bienvenido, Socio</h2>
+                                <p className="text-slate font-light">Comencemos estableciendo la identidad central de su santuario.</p>
                             </div>
                             <form onSubmit={handleNext} className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Business Name</label>
+                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Nombre del Negocio</label>
                                     <input
                                         required
                                         className="w-full bg-cream border-b border-navy/20 py-4 px-0 focus:outline-none focus:border-navy transition-all text-lg font-light placeholder:opacity-30"
@@ -129,7 +129,7 @@ export default function BusinessRegistrationPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Location</label>
+                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Ubicación</label>
                                     <input
                                         required
                                         className="w-full bg-cream border-b border-navy/20 py-4 px-0 focus:outline-none focus:border-navy transition-all text-lg font-light placeholder:opacity-30"
@@ -142,7 +142,7 @@ export default function BusinessRegistrationPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Business Email</label>
+                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Email del Negocio</label>
                                     <input
                                         required
                                         type="email"
@@ -156,7 +156,7 @@ export default function BusinessRegistrationPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Secret Key (Password)</label>
+                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Llave Secreta (Contraseña)</label>
                                     <input
                                         required
                                         type="password"
@@ -174,7 +174,7 @@ export default function BusinessRegistrationPage() {
                                         {error}
                                     </div>
                                 )}
-                                <Button size="lg" className="w-full btn-hero mt-8">Continue Onboarding</Button>
+                                <Button size="lg" className="w-full btn-hero mt-8">Continuar Registro</Button>
                             </form>
                         </div>
                     )}
@@ -182,12 +182,12 @@ export default function BusinessRegistrationPage() {
                     {step === 2 && (
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <h2 className="text-3xl font-serif text-navy">Define Your Essence</h2>
-                                <p className="text-slate font-light">Describe what makes your experience extraordinary.</p>
+                                <h2 className="text-3xl font-serif text-navy">Defina su Esencia</h2>
+                                <p className="text-slate font-light">Describa qué hace que su experiencia sea extraordinaria.</p>
                             </div>
                             <form onSubmit={handleNext} className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Category</label>
+                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Categoría</label>
                                     <select
                                         className="w-full bg-cream border-b border-navy/20 py-4 px-0 focus:outline-none focus:border-navy transition-all text-lg font-light appearance-none"
                                         value={formData.category === 'wellness' || formData.category === 'adventure' || formData.category === 'urban' || formData.category === 'private' ? formData.category : 'other'}
@@ -196,16 +196,16 @@ export default function BusinessRegistrationPage() {
                                             setFormData({ ...formData, category: val === 'other' ? "" : val });
                                         }}
                                     >
-                                        <option value="wellness">Wellness & Spa</option>
-                                        <option value="adventure">Adventure & Nature</option>
-                                        <option value="urban">Urban Luxury</option>
-                                        <option value="private">Private Islands</option>
-                                        <option value="other">Other...</option>
+                                        <option value="wellness">Bienestar y Spa</option>
+                                        <option value="adventure">Aventura y Naturaleza</option>
+                                        <option value="urban">Lujo Urbano</option>
+                                        <option value="private">Islas Privadas</option>
+                                        <option value="other">Otro...</option>
                                     </select>
                                 </div>
                                 {(formData.category === "" || !['wellness', 'adventure', 'urban', 'private'].includes(formData.category)) && (
                                     <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
-                                        <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Custom Category</label>
+                                        <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Categoría Personalizada</label>
                                         <input
                                             required
                                             className="w-full bg-cream border-b border-navy/20 py-4 px-0 focus:outline-none focus:border-navy transition-all text-lg font-light placeholder:opacity-30"
@@ -216,11 +216,11 @@ export default function BusinessRegistrationPage() {
                                     </div>
                                 )}
                                 <div className="space-y-2">
-                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Description</label>
+                                    <label className="text-xs uppercase tracking-widest font-bold text-navy opacity-60">Descripción</label>
                                     <textarea
                                         required
                                         className="w-full bg-cream border-b border-navy/20 py-4 px-0 focus:outline-none focus:border-navy transition-all text-lg font-light placeholder:opacity-30 h-32 resize-none"
-                                        placeholder="Tell your story..."
+                                        placeholder="Cuéntenos su historia..."
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     />
@@ -231,8 +231,8 @@ export default function BusinessRegistrationPage() {
                                     </div>
                                 )}
                                 <div className="flex gap-4">
-                                    <Button type="button" variant="ghost" className="w-1/3" onClick={() => setStep(1)}>Back</Button>
-                                    <Button size="lg" className="w-2/3 btn-hero">Next: Curate Menu</Button>
+                                    <Button type="button" variant="ghost" className="w-1/3" onClick={() => setStep(1)}>Volver</Button>
+                                    <Button size="lg" className="w-2/3 btn-hero">Siguiente: Curar Menú</Button>
                                 </div>
                             </form>
                         </div>
@@ -241,8 +241,8 @@ export default function BusinessRegistrationPage() {
                     {step === 3 && (
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <h2 className="text-3xl font-serif text-navy">Curate Your Menu</h2>
-                                <p className="text-slate font-light">Define the experiences and rituals you offer.</p>
+                                <h2 className="text-3xl font-serif text-navy">Curar su Menú</h2>
+                                <p className="text-slate font-light">Defina las experiencias y rituales que ofrece.</p>
                             </div>
                             <form onSubmit={handleNext} className="space-y-6">
                                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
@@ -250,7 +250,7 @@ export default function BusinessRegistrationPage() {
                                         <div key={service.id} className="p-6 bg-cream border border-navy/5 space-y-4 relative group animate-in fade-in slide-in-from-bottom-2">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-navy opacity-40">Service Name</label>
+                                                    <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-navy opacity-40">Nombre del Servicio</label>
                                                     <input
                                                         required
                                                         placeholder="e.g., Volcanic Stone Ritual"
@@ -261,7 +261,7 @@ export default function BusinessRegistrationPage() {
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="space-y-2">
-                                                        <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-navy opacity-40">Price ($)</label>
+                                                        <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-navy opacity-40">Precio ($)</label>
                                                         <input
                                                             required
                                                             type="number"
@@ -303,12 +303,12 @@ export default function BusinessRegistrationPage() {
                                     onClick={addService}
                                     className="w-full border-dashed border-2 border-navy/10 py-8 hover:bg-cream hover:border-navy/20 transition-all text-navy/40 uppercase tracking-widest text-xs"
                                 >
-                                    + Add Luxury Experience
+                                    + Añadir Experiencia de Lujo
                                 </Button>
 
                                 <div className="flex gap-4 pt-4">
-                                    <Button type="button" variant="ghost" className="w-1/3" onClick={() => setStep(2)}>Back</Button>
-                                    <Button size="lg" className="w-2/3 btn-hero">Finalize Registration</Button>
+                                    <Button type="button" variant="ghost" className="w-1/3" onClick={() => setStep(2)}>Volver</Button>
+                                    <Button size="lg" className="w-2/3 btn-hero">Finalizar Registro</Button>
                                 </div>
                             </form>
                         </div>
@@ -320,18 +320,18 @@ export default function BusinessRegistrationPage() {
                                 <CheckCircle2 className="w-10 h-10" />
                             </div>
                             <div className="space-y-2">
-                                <h2 className="text-4xl font-serif text-navy">Application Received</h2>
+                                <h2 className="text-4xl font-serif text-navy">Solicitud Recibida</h2>
                                 <p className="text-slate font-light max-w-md mx-auto">
-                                    Thank you for choosing to partner with us, <strong>{formData.businessName}</strong>.
-                                    Our curation team will review your application within 48 hours.
+                                    Gracias por elegir asociarse con nosotros, <strong>{formData.businessName}</strong>.
+                                    Nuestro equipo de curación revisará su solicitud en un plazo de 48 horas.
                                 </p>
                             </div>
                             <div className="flex flex-col gap-4">
                                 <Link href="/dashboard">
-                                    <Button size="lg" className="w-full btn-hero">Explore Partner Dashboard</Button>
+                                    <Button size="lg" className="w-full btn-hero">Explorar Panel de Socio</Button>
                                 </Link>
                                 <Link href="/">
-                                    <Button variant="ghost" className="text-navy/60">Back to Landing Page</Button>
+                                    <Button variant="ghost" className="text-navy/60">Volver a la Página de Inicio</Button>
                                 </Link>
                             </div>
                         </div>

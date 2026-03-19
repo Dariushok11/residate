@@ -29,21 +29,22 @@ export default function DestinationsPage() {
                 <div className="absolute top-8 left-4 md:left-8 z-20">
                     <Link href="/" className="inline-flex items-center gap-2 text-xs md:text-sm uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity text-white">
                         <ArrowLeft className="h-4 w-4" />
-                        Volver al inicio
+                        Back to Home
                     </Link>
                 </div>
 
                 <div className="max-w-4xl mx-auto text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <span className="text-xs uppercase tracking-[0.2em] text-gold font-medium block">Explora la Colección</span>
-                    <h1 className="text-4xl md:text-5xl font-serif">Destinos Seleccionados</h1>
+                    <span className="text-xs uppercase tracking-[0.2em] text-gold font-medium block">Explore the Collection</span>
+                    <h1 className="text-4xl md:text-5xl font-serif">Curated Destinations</h1>
 
                     {/* Search Bar - Stylized to match Main Page */}
-                    <div className="max-w-2xl mx-auto mt-12 relative group text-left">
+                    <div className="max-w-2xl mx-auto mt-12 relative group text-left search-container">
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-navy opacity-40 group-focus-within:opacity-100 transition-opacity z-10" />
                         <input
                             type="text"
-                            placeholder="Buscar Negocios"
-                            className="w-full bg-white text-navy py-5 pl-16 pr-6 text-lg md:text-xl tracking-widest focus:outline-none transition-all font-light placeholder:text-navy/30 uppercase border-none shadow-2xl"
+                            placeholder="Search Businesses"
+                            style={{ paddingLeft: '80px' }}
+                            className="w-full bg-white text-navy py-5 pr-6 text-lg md:text-xl tracking-widest focus:outline-none transition-all font-light placeholder:text-navy/30 uppercase border-none shadow-2xl"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -54,11 +55,11 @@ export default function DestinationsPage() {
             {/* Results Grid */}
             <div className="max-w-7xl mx-auto px-4 md:px-8 py-20">
                 {!isHydrated ? (
-                    <div className="text-center py-20 opacity-50 font-serif italic">Cargando colección...</div>
+                    <div className="text-center py-20 opacity-50 font-serif italic">Loading collection...</div>
                 ) : filteredBusinesses.length === 0 ? (
                     <div className="text-center py-20 space-y-4">
-                        <p className="text-2xl font-serif text-navy/50">No se han encontrado negocios con esos criterios.</p>
-                        <Button variant="ghost" onClick={() => setSearchTerm('')} className="text-gold hover:text-navy">Limpiar filtros</Button>
+                        <p className="text-2xl font-serif text-navy/50">No businesses found with those criteria.</p>
+                        <Button variant="ghost" onClick={() => setSearchTerm('')} className="text-gold hover:text-navy">Clear filters</Button>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

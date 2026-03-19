@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useBookingStore, useBusinessStore } from "@/lib/store";
 
 const HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 8 AM to 8 PM
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const DAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
 // Helper to get a stable unique key for a specific date
 const formatDateKey = (date: Date) => {
@@ -29,7 +29,7 @@ export function BusinessCalendar() {
     // Estados para el modal de bloqueo y calendario
     const [showBlockModal, setShowBlockModal] = React.useState(false);
     const [showGCalModal, setShowGCalModal] = React.useState(false); // Nuevo estado para modal GCal
-    const [blockReason, setBlockReason] = React.useState("Personal Commitment");
+    const [blockReason, setBlockReason] = React.useState("Bloqueo");
     const [icalUrlInput, setIcalUrlInput] = React.useState(""); // Estado para el input de URL
     const [selectedSlot, setSelectedSlot] = React.useState<{ day: string, hour: number, id?: string } | null>(null);
     const [mobileDayIndex, setMobileDayIndex] = React.useState(0);
@@ -105,7 +105,7 @@ export function BusinessCalendar() {
                             dayKey,
                             hour,
                             "Google Calendar", // clientName
-                            event.summary || "Busy", // service
+                            event.summary || "Ocupado", // service
                             "gcal@sync.com" // clientEmail
                         );
                         syncedCount++;
@@ -450,7 +450,7 @@ export function BusinessCalendar() {
                                                                     <Lock className="h-3 w-3" />
                                                                     {/* Show the service (reason) as the main title if available, otherwise generic */}
                                                                     <span className="truncate">
-                                                                        {slot.service || (slot.clientName === "Google Calendar" ? "GCal Event" : "Ocupado")}
+                                                                        {slot.service || (slot.clientName === "Google Calendar" ? "Evento GCal" : "Ocupado")}
                                                                     </span>
                                                                 </div>
                                                                 <span className="opacity-70 truncate italic text-[10px]">
@@ -461,12 +461,12 @@ export function BusinessCalendar() {
                                                             <>
                                                                 <div className="font-bold font-serif truncate flex items-center gap-1">
                                                                     {slot.isVIP && <span className="text-gold">★</span>}
-                                                                    {slot.clientName || 'Booked'}
+                                                                    {slot.clientName || 'Reservado'}
                                                                 </div>
-                                                                <span className="opacity-70 truncate italic">{slot.service || 'Appointment'}</span>
+                                                                <span className="opacity-70 truncate italic">{slot.service || 'Cita'}</span>
                                                                 <div className="flex justify-between items-end mt-1">
                                                                     <span className="text-[10px] opacity-50">{hour}:00</span>
-                                                                    {slot.status === "pending" && <span className="bg-gold text-white px-1.5 py-0.5 text-[10px] uppercase tracking-wider rounded-sm">Review</span>}
+                                                                    {slot.status === "pending" && <span className="bg-gold text-white px-1.5 py-0.5 text-[10px] uppercase tracking-wider rounded-sm">Revisar</span>}
                                                                 </div>
                                                             </>
                                                         )}

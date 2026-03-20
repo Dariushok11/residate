@@ -99,7 +99,7 @@ export default function AureliaChatbot() {
         try {
             // Small delay for natural feel, then await async AI response
             await new Promise(r => setTimeout(r, Math.min(300 + trimmed.length * 10, 800)));
-            const response = await aiRef.current!.process(trimmed);
+            const response = await aiRef.current!.process(trimmed, messages);
 
             const assistantMessage: Message = {
                 role: "assistant",

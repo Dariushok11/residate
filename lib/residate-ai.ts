@@ -745,7 +745,7 @@ export class ResidateAI {
 
     // ─── Proceso principal (async) ───────────────────────────────────
 
-    async process(userInput: string): Promise<string> {
+    async process(userInput: string, fullHistory: any[] = []): Promise<string> {
         // Detect role
         const role = this.detectRole(userInput);
         if (role !== "unknown") this.context.userRole = role;
@@ -823,8 +823,8 @@ export class ResidateAI {
             response = await executeBusinessSearch(searchTerm, true);
         }
 
-        // 3. If no response, use normal Knowledge Base response (medium/low priority)
-        if (!response && kbResult) {
+        // 3. If no response, use normal Knowledge Base response only if it's high priority (platform/identity)
+        if (!response && kbResult && kbResult.priority >= 10) {
             response = kbResult.response;
         }
 
@@ -833,7 +833,29 @@ export class ResidateAI {
             response = await executeBusinessSearch(normalize(userInput), false);
         }
 
-        // 5. Finally, smart fallback for unknown inputs
+        // 5. Finally, real AI fallback with Gemini
+        if (!response) {
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: fullHistory.concat({ role: 'user', content: userInput })
+                    })
+                });
+                const data = await res.json();
+                if (data.text) {
+                    response = data.text;
+                } else {
+                    response = this.generateSmartFallback(userInput);
+                }
+            } catch (err) {
+                console.error("Gemini connection error:", err);
+                response = this.generateSmartFallback(userInput);
+            }
+        }
+
+        // Safety guarantee for TS
         if (!response) {
             response = this.generateSmartFallback(userInput);
         }

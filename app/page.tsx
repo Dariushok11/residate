@@ -117,7 +117,7 @@ export default function Home() {
                                     >
                                         <div className="aspect-[3/4] bg-[var(--bg-secondary)] relative overflow-hidden mb-6">
                                             <div className="absolute inset-0 bg-gray-200 group-hover:scale-105 transition-transform duration-700 ease-out flex items-center justify-center p-4">
-                                                <span className="text-navy font-serif opacity-20 text-xs italic tracking-widest uppercase">Vista Previa</span>
+                                                {/* Text removed */}
                                             </div>
                                         </div>
                                         <div className="space-y-1 text-center">

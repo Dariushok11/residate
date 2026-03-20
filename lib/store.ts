@@ -272,23 +272,26 @@ export function useBusinessStore() {
     }, []);
 
     const deleteEntireBusiness = useCallback(async (id: string) => {
-        // Since we can't physically DELETE from the database due to anon-key restrictions,
-        // we use a "Deletion Signal" pattern. We insert a special record that tells the app
-        // to ignore this business everywhere.
-        const { error } = await supabase
+        // First, physically delete all bookings for this business to prevent foreign key errors
+        const { error: bookingsError } = await supabase
             .from('bookings')
-            .insert([{
-                business_id: id,
-                day_key: 'DELETE',
-                hour: -1,
-                guest_name: 'SYSTEM',
-                service_name: '__RESIDATE_DELETE_SIGNAL__',
-                guest_email: 'deleted@residate.com'
-            }]);
+            .delete()
+            .eq('business_id', id);
 
-        if (error) {
-            console.error("Error sending deletion signal:", error);
-            return { error: error.message };
+        if (bookingsError) {
+            console.error("Error deleting business bookings:", bookingsError);
+            return { error: bookingsError.message };
+        }
+
+        // Second, physically delete the business from the database forever
+        const { error: businessError } = await supabase
+            .from('businesses')
+            .delete()
+            .eq('id', id);
+
+        if (businessError) {
+            console.error("Error deleting business:", businessError);
+            return { error: businessError.message };
         }
 
         return { success: true };

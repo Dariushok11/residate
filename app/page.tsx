@@ -115,11 +115,6 @@ export default function Home() {
                                         href={`/book?id=${business.id}`}
                                         className="group cursor-pointer no-underline text-inherit animate-in fade-in slide-in-from-bottom-2 duration-500"
                                     >
-                                        <div className="aspect-[3/4] bg-[var(--bg-secondary)] relative overflow-hidden mb-6">
-                                            <div className="absolute inset-0 bg-gray-200 group-hover:scale-105 transition-transform duration-700 ease-out flex items-center justify-center p-4">
-                                                {/* Text removed */}
-                                            </div>
-                                        </div>
                                         <div className="space-y-1 text-center">
                                             <h4 className="text-xl font-serif text-navy">{business.name}</h4>
                                             <p className="text-[10px] text-gold uppercase tracking-[0.2em] font-medium">{business.category} • {business.location}</p>

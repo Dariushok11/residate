@@ -48,7 +48,7 @@ export default function Home() {
                         <Link href="/login">
                             <Button variant="ghost" className="inline-flex px-3 sm:px-4 text-xs sm:text-sm">Acceder</Button>
                         </Link>
-                        <Link href="/book">
+                        <Link href="/destinations">
                             <Button>Reservar Ahora</Button>
                         </Link>
                     </div>
@@ -70,7 +70,7 @@ export default function Home() {
                         </p>
 
                         <div className="flex flex-col sm-flex-row gap-4 mt-8 justify-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300 fill-mode-forwards opacity-0" style={{ animationFillMode: 'forwards' }}>
-                            <Link href="/book">
+                            <Link href="/destinations">
                                 <Button size="lg" className="btn-hero w-full sm-w-auto hover:scale-105 transition-transform duration-300">Reservar Ahora</Button>
                             </Link>
                             {hasBusiness && (

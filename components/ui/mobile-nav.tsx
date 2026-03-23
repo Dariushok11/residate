@@ -34,10 +34,10 @@ export function MobileNav() {
 
                     <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-y-auto bg-white">
                         <nav className="flex flex-col items-center justify-center gap-8 w-full max-w-sm mx-auto text-xl font-serif uppercase tracking-widest text-navy">
-                            <Link href="/book" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Destinos</Link>
-                            <Link href="/book" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Experiencias</Link>
-                            <Link href="/book" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Membresía</Link>
-                            <Link href="/book" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Sobre nosotros</Link>
+                            <Link href="/destinations" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Destinos</Link>
+                            <Link href="/destinations" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Experiencias</Link>
+                            <Link href="#" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Membresía</Link>
+                            <Link href="/journal" onClick={() => setOpen(false)} className="hover:text-gold transition-colors block py-2">Sobre nosotros</Link>
 
                             <div className="h-px w-10 bg-gold my-4 opacity-50"></div>
 
@@ -47,7 +47,7 @@ export function MobileNav() {
                                         Acceso Clientes
                                     </Button>
                                 </Link>
-                                <Link href="/book" onClick={() => setOpen(false)} className="w-full">
+                                <Link href="/destinations" onClick={() => setOpen(false)} className="w-full">
                                     <Button className="w-full bg-navy hover:bg-navy/90 text-white h-12 uppercase tracking-wider text-sm font-bold">
                                         Reservar Ahora
                                     </Button>

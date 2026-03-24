@@ -168,8 +168,22 @@ export default function Home() {
                 <div className="container px-4 md-px-6 flex flex-col md-flex-row justify-between items-center gap-8 md-gap-0">
                     <div className="flex items-center gap-4">
                         <div className="text-2xl font-serif uppercase tracking-widest">ResiDate</div>
-                        <a href="https://www.instagram.com/residate.co/" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity p-2 hover:bg-slate-100 rounded-full" aria-label="Instagram">
-                            <Instagram className="w-5 h-5 text-navy" />
+                        <a href="https://www.instagram.com/residate.co/" target="_blank" rel="noopener noreferrer" className="transition-transform hover:scale-110 p-2" aria-label="Instagram">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 shadow-sm rounded-lg">
+                                <defs>
+                                    <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                                        <stop offset="0%" stopColor="#feda75" />
+                                        <stop offset="25%" stopColor="#fa7e1e" />
+                                        <stop offset="50%" stopColor="#d62976" />
+                                        <stop offset="75%" stopColor="#962fbf" />
+                                        <stop offset="100%" stopColor="#4f5bd5" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="24" height="24" rx="6" fill="url(#ig-grad)" />
+                                <rect x="3.5" y="3.5" width="17" height="17" rx="4" stroke="white" strokeWidth="2" />
+                                <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="2" />
+                                <circle cx="17.5" cy="6.5" r="1.2" fill="white" />
+                            </svg>
                         </a>
                     </div>
                     <p className="text-sm text-[var(--text-secondary)]">© 2026 ResiDate. Todos los derechos reservados.</p>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, Instagram } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import { useBusinessStore } from "@/lib/store";
@@ -166,7 +166,12 @@ export default function Home() {
 
             <footer className="border-t border-[var(--border-subtle)] py-12 md:py-24 bg-[var(--bg-primary)]">
                 <div className="container px-4 md-px-6 flex flex-col md-flex-row justify-between items-center gap-8 md-gap-0">
-                    <div className="text-2xl font-serif uppercase tracking-widest">ResiDate</div>
+                    <div className="flex items-center gap-4">
+                        <div className="text-2xl font-serif uppercase tracking-widest">ResiDate</div>
+                        <a href="https://www.instagram.com/residate.co/" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity p-2 hover:bg-slate-100 rounded-full" aria-label="Instagram">
+                            <Instagram className="w-5 h-5 text-navy" />
+                        </a>
+                    </div>
                     <p className="text-sm text-[var(--text-secondary)]">© 2026 ResiDate. Todos los derechos reservados.</p>
                 </div>
             </footer>

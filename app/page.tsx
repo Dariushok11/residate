@@ -185,6 +185,13 @@ export default function Home() {
                                 <circle cx="17.5" cy="6.5" r="1.2" fill="white" />
                             </svg>
                         </a>
+                        <a href="https://www.tiktok.com/@residate.co" target="_blank" rel="noopener noreferrer" className="transition-transform hover:scale-110 p-2" aria-label="TikTok">
+                            <svg width="24" height="24" viewBox="0 0 448 512" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[22px] h-[22px]">
+                                <path fill="#25F4EE" transform="translate(-16, -16)" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
+                                <path fill="#FE2C55" transform="translate(16, 16)" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
+                                <path fill="#010101" transform="translate(0, 0)" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
+                            </svg>
+                        </a>
                     </div>
                     <p className="text-sm text-[var(--text-secondary)]">© 2026 ResiDate. Todos los derechos reservados.</p>
                 </div>

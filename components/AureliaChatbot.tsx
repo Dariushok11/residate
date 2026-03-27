@@ -70,7 +70,7 @@ export default function AureliaChatbot() {
             setTimeout(() => {
                 setMessages([{
                     role: "assistant",
-                    content: `${saludo}! 🤍 Soy **Aurelia**, tu asistente personal en ResiDate.\n\nPuedo ayudarte con:\n• Reservas y citas\n• Panel de control y negocio\n• Configuración de Smart Reserve™\n• Cualquier pregunta o tema que quieras explorar\n\n¿En qué puedo ayudarte?`,
+                    content: `${saludo}! 🤍 Soy **AurelIA**, tu asistente personal en ResiDate.\n\nPuedo ayudarte con:\n• Reservas y citas\n• Panel de control y negocio\n• Configuración de Smart Reserve™\n• Cualquier pregunta o tema que quieras explorar\n\n¿En qué puedo ayudarte?`,
                     timestamp: Date.now(),
                 }]);
                 setIsTyping(false);
@@ -143,7 +143,7 @@ export default function AureliaChatbot() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 id="aurelia-toggle"
-                aria-label={isOpen ? "Cerrar chat" : "Abrir asistente Aurelia"}
+                aria-label={isOpen ? "Cerrar chat" : "Abrir asistente AurelIA"}
                 style={{
                     position: "fixed",
                     bottom: "24px",
@@ -246,7 +246,7 @@ export default function AureliaChatbot() {
                             A
                         </div>
                         <div>
-                            <h4 style={{ fontSize: "14px", fontWeight: 500, margin: 0, letterSpacing: "0.5px" }}>Aurelia</h4>
+                            <h4 style={{ fontSize: "14px", fontWeight: 500, margin: 0, letterSpacing: "0.5px" }}>AurelIA</h4>
                             <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "1.5px", opacity: 0.4, margin: 0 }}>Asistente ResiDate</p>
                         </div>
                     </div>
@@ -338,7 +338,7 @@ export default function AureliaChatbot() {
                             value={input}
                             onChange={e => setInput(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder="Pregúntale lo que quieras a Aurelia..."
+                            placeholder="Pregúntale lo que quieras a AurelIA..."
                             disabled={isTyping}
                             style={{
                                 flex: 1,

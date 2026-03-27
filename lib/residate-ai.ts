@@ -149,8 +149,8 @@ const KNOWLEDGE: KnowledgeEntry[] = [
         priority: 15,
         response: (ctx) => {
             const responses = [
-                "Soy **Aurelia**, la inteligencia artificial de ResiDate. Fui creada desde cero con mi propio motor de procesamiento de lenguaje natural. Puedo hablar de cualquier tema — desde reservas hasta filosofía. ¿Qué te apetece explorar?",
-                "Me llamo **Aurelia**. Soy una IA conversacional diseñada específicamente para ResiDate, pero mi conocimiento va mucho más allá de la plataforma. Pregúntame lo que quieras, sobre cualquier tema. 🤍",
+                "Soy **AurelIA**, la inteligencia artificial de ResiDate. Fui creada desde cero con mi propio motor de procesamiento de lenguaje natural. Puedo hablar de cualquier tema — desde reservas hasta filosofía. ¿Qué te apetece explorar?",
+                "Me llamo **AurelIA**. Soy una IA conversacional diseñada específicamente para ResiDate, pero mi conocimiento va mucho más allá de la plataforma. Pregúntame lo que quieras, sobre cualquier tema. 🤍",
             ];
             return pickRandom(responses);
         }
@@ -171,7 +171,7 @@ const KNOWLEDGE: KnowledgeEntry[] = [
             const h = new Date().getHours();
             const saludo = h < 12 ? "¡Buenos días" : h < 20 ? "¡Buenas tardes" : "¡Buenas noches";
             if (ctx.turnCount === 0) {
-                return `${saludo}! 🤍 Soy **Aurelia**, tu asistente personal en ResiDate. Puedo ayudarte con la plataforma o hablar de lo que quieras. ¿En qué te puedo echar una mano?`;
+                return `${saludo}! 🤍 Soy **AurelIA**, tu asistente personal en ResiDate. Puedo ayudarte con la plataforma o hablar de lo que quieras. ¿En qué te puedo echar una mano?`;
             }
             return `${saludo}! ¿En qué más puedo ayudarte?`;
         }

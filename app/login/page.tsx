@@ -51,16 +51,28 @@ export default function LoginPage() {
                 .select('name, id, description')
                 .ilike('email', cleanEmail)
                 .limit(1)
-                .single();
+                .maybeSingle();
+
+            if (error) {
+                alert(`❌ Error de base de datos: ${error.message}`);
+                setIsLoading(false);
+                return;
+            }
 
             if (data) {
                 // Extract password from description workaround
                 const pwdMatch = data.description?.match(/\[PWD:(.*?)\]/);
-                const storedPassword = pwdMatch ? pwdMatch[1].trim() : null;
+                const storedPassword = pwdMatch ? (pwdMatch[1] || "").trim() : null;
 
                 // Enforce strict password verification for all businesses
+                if (!storedPassword) {
+                    alert("❌ Este negocio no tiene contraseña configurada. Por favor contacta con soporte.");
+                    setIsLoading(false);
+                    return;
+                }
+
                 if (cleanPassword !== storedPassword) {
-                    alert("❌ La contraseña (Llave Secreta) es incorrecta o no ha sido configurada.");
+                    alert("❌ La contraseña (Llave Secreta) es incorrecta.");
                     setIsLoading(false);
                     return;
                 }
@@ -73,9 +85,9 @@ export default function LoginPage() {
                 alert("❌ No se encontró ningún negocio registrado con este email.");
                 setIsLoading(false);
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            alert("❌ Error durante el acceso. Por favor, inténtalo de nuevo.");
+            alert(`❌ Error crítico durante el acceso: ${err.message || 'Inténtalo de nuevo.'}`);
             setIsLoading(false);
         }
     };

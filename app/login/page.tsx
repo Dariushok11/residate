@@ -42,20 +42,24 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            // Find the business by email in Supabase
+            const cleanEmail = email.trim();
+            const cleanPassword = password.trim();
+
+            // Find the business by email in Supabase (case-insensitive for safety)
             const { data, error } = await supabase
                 .from('businesses')
                 .select('name, id, description')
-                .eq('email', email)
+                .ilike('email', cleanEmail)
+                .limit(1)
                 .single();
 
             if (data) {
                 // Extract password from description workaround
                 const pwdMatch = data.description?.match(/\[PWD:(.*?)\]/);
-                const storedPassword = pwdMatch ? pwdMatch[1] : null;
+                const storedPassword = pwdMatch ? pwdMatch[1].trim() : null;
 
-                // Enforce strict password verification for all businesses (old and new)
-                if (password !== storedPassword) {
+                // Enforce strict password verification for all businesses
+                if (cleanPassword !== storedPassword) {
                     alert("❌ La contraseña (Llave Secreta) es incorrecta o no ha sido configurada.");
                     setIsLoading(false);
                     return;

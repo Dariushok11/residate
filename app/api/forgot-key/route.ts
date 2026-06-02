@@ -61,7 +61,7 @@ export async function POST(req: Request) {
         // 4. Enviar correo via Resend
         if (process.env.RESEND_API_KEY) {
             await resend.emails.send({
-                from: 'ResiDate <noreply@residate.co>',
+                from: 'ResiDate <onboarding@resend.dev>',
                 to: email.trim(),
                 subject: `Tú código de acceso: ${pin}`,
                 html: `

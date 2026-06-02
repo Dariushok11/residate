@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-// import { Resend } from 'resend';
+import { Resend } from 'resend';
 
-// const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
     try {
@@ -58,8 +58,7 @@ export async function POST(req: Request) {
         // Guardar PIN
         await supabase.from('businesses').update({ description: newDesc }).eq('id', business.id);
 
-        // 4. Enviar correo via Resend (Descomentar si Resend está configurado)
-        /*
+        // 4. Enviar correo via Resend
         if (process.env.RESEND_API_KEY) {
             await resend.emails.send({
                 from: 'ResiDate <noreply@residate.co>',
@@ -80,7 +79,6 @@ export async function POST(req: Request) {
         } else {
             console.log(`[DEV MODE] Correo simulado. PIN para ${email}: ${pin}`);
         }
-        */
         
         console.log(`[DEV MODE] PIN de recuperación para ${email}: ${pin}`);
 

@@ -1,61 +1,92 @@
-import { Resend } from 'resend';
+import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+// import { Resend } from 'resend';
 
-// Use environment variable if available, fallback to the provided test key
-const resend = new Resend(process.env.RESEND_API_KEY || 're_baXTqWN5_7xUAQH7wGZH92ayEhB73Hj8o');
+// const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
     try {
-        const { email } = await request.json();
+        const { email } = await req.json();
 
         if (!email) {
-            return new Response(JSON.stringify({ error: 'Email is required' }), { status: 400 });
+            return NextResponse.json({ error: 'Email requerido' }, { status: 400 });
         }
 
-        // Fetch user from Supabase to grab their real key
-        const { data: business, error: dbError } = await supabase
+        // 1. Verificar si el negocio existe
+        const { data: business, error } = await supabase
             .from('businesses')
-            .select('description')
-            .eq('email', email)
-            .single();
+            .select('id, name, description')
+            .ilike('email', email.trim())
+            .limit(1)
+            .maybeSingle();
 
-        if (dbError || !business) {
-            return new Response(JSON.stringify({ error: 'No user found' }), { status: 404 });
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
         }
 
-        // Extract password from description workaround
-        const pwdMatch = business.description?.match(/\[PWD:(.*?)\]/);
-        const storedPassword = pwdMatch ? pwdMatch[1] : '12345'; // Default fallback
-
-        // Send email with their real password
-        // Important: use @residate.com which is verified, so Resend can deliver to ANY email address.
-        const resendData = await resend.emails.send({
-            from: 'ResiDate <soporte@residate.com>',
-            to: [email],
-            subject: 'Recuperación de Llave Secreta - ResiDate',
-            html: `
-                <div style="font-family: serif; color: #001f3f; padding: 20px;">
-                    <h1 style="color: #c5a059;">ResiDate</h1>
-                    <p>Hola,</p>
-                    <p>Has solicitado recuperar tu llave de acceso para el Portal del Socio de <strong>ResiDate</strong>.</p>
-                    <p>Aqui tienes tu Llave Secreta:</p>
-                    <p><span style="background: #f4f1ea; padding: 10px 15px; border-radius: 4px; font-weight: bold; font-size: 18px; color: #001f3f;">${storedPassword}</span></p>
-                    <p>Por favor, utiliza esta llave junto con tu correo electrónico para iniciar sesión de forma segura.</p>
-                    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0 20px 0;" />
-                    <p style="font-size: 12px; color: #666;">© 2026 ResiDate - Timeless Experiences</p>
-                </div>
-            `,
-        });
-
-        if (resendData.error) {
-            console.error('Resend encountered an error:', resendData.error);
-            // If they haven't verified residate.com, this will let the client know.
-            return new Response(JSON.stringify({ error: resendData.error.message }), { status: 400 });
+        if (!business) {
+            // Seguridad: NO revelar si el correo existe o no a los atacantes
+            return NextResponse.json({ success: true, message: 'Si el correo existe, enviaremos un PIN.' });
         }
 
-        return new Response(JSON.stringify(resendData), { status: 200 });
-    } catch (error: any) {
-        console.error('Server error during forgot-key:', error);
-        return new Response(JSON.stringify({ error: error.message || 'Internal Server Error' }), { status: 500 });
+        // 2. Generar PIN aleatorio de 6 digitos
+        const pin = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiration = Date.now() + 15 * 60 * 1000; // 15 mins
+
+        // 3. Extraer el bloque auth existente o crearlo
+        let sysAuth = {};
+        const sysAuthMatch = business.description?.match(/---SYS_AUTH---\n(.*)/);
+        if (sysAuthMatch) {
+            try {
+                sysAuth = JSON.parse(sysAuthMatch[1].trim());
+            } catch(e) {}
+        } else {
+            // Convertir la password vieja a nueva estructura si existe
+            const pwdMatch = business.description?.match(/\[PWD:(.*?)\]/);
+            const oldPwd = pwdMatch ? (pwdMatch[1] || "").trim() : null;
+            if (oldPwd) sysAuth.pwd = oldPwd;
+        }
+
+        // Añadir PIN de recuperación
+        sysAuth.recoveryPin = pin;
+        sysAuth.recoveryExp = expiration;
+
+        // Limpiar descripcion
+        const cleanDesc = (business.description || "").replace(/\n*\[PWD:.*?\]/g, "").replace(/\n*---SYS_AUTH---\n.*/g, "").trim();
+        const newDesc = `${cleanDesc}\n\n---SYS_AUTH---\n${JSON.stringify(sysAuth)}`;
+
+        // Guardar PIN
+        await supabase.from('businesses').update({ description: newDesc }).eq('id', business.id);
+
+        // 4. Enviar correo via Resend (Descomentar si Resend está configurado)
+        /*
+        if (process.env.RESEND_API_KEY) {
+            await resend.emails.send({
+                from: 'ResiDate <noreply@residate.co>',
+                to: email.trim(),
+                subject: `Tú código de acceso: ${pin}`,
+                html: `
+                    <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; text-align: center; color: #1a1a1a;">
+                        <h1 style="color: #997A5E;">ResiDate</h1>
+                        <p>Hola <strong>${business.name}</strong>,</p>
+                        <p>Has solicitado recuperar tu acceso al Portal del Socio. Tu PIN de seguridad es:</p>
+                        <div style="font-size: 32px; font-weight: bold; letter-spacing: 5px; background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">${pin}</div>
+                        <p style="font-size: 12px; color: #666;">Este código caducará en 15 minutos.</p>
+                        <hr style="border: 0; border-top: 1px solid #eaeaea; margin: 30px 0;" />
+                        <p style="font-size: 10px; color: #999;">Si no has solicitado este código, ignora este correo.</p>
+                    </div>
+                `
+            });
+        } else {
+            console.log(`[DEV MODE] Correo simulado. PIN para ${email}: ${pin}`);
+        }
+        */
+        
+        console.log(`[DEV MODE] PIN de recuperación para ${email}: ${pin}`);
+
+        return NextResponse.json({ success: true, message: 'Si el correo existe, enviaremos un PIN.' });
+
+    } catch (err: any) {
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

@@ -195,12 +195,17 @@ export function useBusinessStore() {
                     !deletedIds.has(b.id) &&
                     !hardExcludedNames.includes(b.name.toLowerCase().trim())
                 ).map(b => {
-                    const desc = b.description || "";
+                    let desc = b.description || "";
                     const smartMatch = desc.match(/\[SMART:(.*?)\]/);
                     const smartSlots = smartMatch ? smartMatch[1].split(',').map(Number).filter(n => !isNaN(n)) : [];
+                    
+                    // Strip auth secrets from description so they NEVER leak to the UI
+                    desc = desc.replace(/\[PWD:.*?\]/g, "").replace(/---SYS_AUTH---\n.*/g, "").trim();
+
                     return {
                         ...b,
-                        password: (b as any).password || "",
+                        description: desc,
+                        password: "",
                         smartSlots
                     };
                 }));
@@ -238,8 +243,8 @@ export function useBusinessStore() {
         const id = `res-${slug}-${randomStr}`;
 
         const { password, ...businessData } = newBusiness;
-        // Hack: Store password inside description since we can't add an actual 'password' column easily
-        const updatedDescription = `${businessData.description}\n\n[PWD:${password}]`;
+        const sysAuth = JSON.stringify({ pwd: password });
+        const updatedDescription = `${businessData.description}\n\n---SYS_AUTH---\n${sysAuth}`;
 
         const { error: insertError } = await supabase
             .from('businesses')

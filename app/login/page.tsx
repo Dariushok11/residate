@@ -12,29 +12,14 @@ export default function LoginPage() {
     const [password, setPassword] = React.useState("");
 
     const handleForgotKey = async (e: React.MouseEvent) => {
-        // Envio de correo real via Resend API
         e.preventDefault();
         if (!email) {
-            alert("Por favor, introduce tu correo electrónico primero.");
+            alert("Por favor, introduce tu correo electrónico en el campo superior primero.");
             return;
         }
 
-        try {
-            const response = await fetch('/api/forgot-key', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
-
-            if (response.ok) {
-                alert(`✨ ¡Enviado! Revisa la bandeja de entrada de ${email}.`);
-            } else {
-                const errorData = await response.json();
-                alert(`❌ No se pudo enviar el correo: ${errorData.error || 'Por favor, inténtalo de nuevo.'}`);
-            }
-        } catch (error: any) {
-            alert(`❌ No se pudo conectar con el servidor de correos: ${error.message}`);
-        }
+        // Redirigir a la nueva pantalla de recuperación
+        window.location.href = `/recover?email=${encodeURIComponent(email)}`;
     };
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -60,9 +45,28 @@ export default function LoginPage() {
             }
 
             if (data) {
-                // Extract password from description workaround
-                const pwdMatch = data.description?.match(/\[PWD:(.*?)\]/);
-                const storedPassword = pwdMatch ? (pwdMatch[1] || "").trim() : null;
+                let storedPassword = null;
+                
+                // New SYS_AUTH extraction
+                const sysAuthMatch = data.description?.match(/---SYS_AUTH---\n(.*)/);
+                if (sysAuthMatch) {
+                    try {
+                        const parsed = JSON.parse(sysAuthMatch[1].trim());
+                        storedPassword = parsed.pwd;
+                    } catch(e) { console.error("Error parsing SYS_AUTH"); }
+                } else {
+                    // Legacy fallback extraction
+                    const pwdMatch = data.description?.match(/\[PWD:(.*?)\]/);
+                    storedPassword = pwdMatch ? (pwdMatch[1] || "").trim() : null;
+                    
+                    // Auto-upgrade to new format if password matches
+                    if (storedPassword && cleanPassword === storedPassword) {
+                        const cleanDesc = (data.description || "").replace(/\n*\[PWD:.*?\]/g, "");
+                        const newDesc = `${cleanDesc}\n\n---SYS_AUTH---\n{"pwd":"${storedPassword}"}`;
+                        // Background update
+                        supabase.from('businesses').update({ description: newDesc }).eq('id', data.id).then();
+                    }
+                }
 
                 // Enforce strict password verification for all businesses
                 if (!storedPassword) {

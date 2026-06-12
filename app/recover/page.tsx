@@ -1,10 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { X, Mail, KeyRound, Lock, ChevronRight } from "lucide-react";
+import { X, Mail, KeyRound, Lock, ChevronRight, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
-import { supabase } from "@/lib/supabase";
 import { useSearchParams } from 'next/navigation';
 
 function RecoverContent() {
@@ -13,7 +12,8 @@ function RecoverContent() {
 
     const [step, setStep] = React.useState<"email" | "pin" | "password">("email");
     const [isLoading, setIsLoading] = React.useState(false);
-    
+    const [error, setError] = React.useState("");
+
     const [email, setEmail] = React.useState(urlEmail);
     const [pin, setPin] = React.useState("");
     const [newPassword, setNewPassword] = React.useState("");
@@ -21,6 +21,7 @@ function RecoverContent() {
     const handleSendPin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        setError("");
 
         try {
             const res = await fetch('/api/forgot-key', {
@@ -28,62 +29,59 @@ function RecoverContent() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
             });
-            // Siempre avanzamos para no revelar si el correo existe
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.error || "Error al enviar el PIN.");
+                setIsLoading(false);
+                return;
+            }
+
+            if (data.emailError) {
+                // El PIN fue guardado pero el correo no se pudo enviar (restricción de Resend en modo prueba)
+                setError(`⚠️ El PIN fue generado pero el correo no pudo enviarse: ${data.emailError}`);
+            }
+
+            // Avanzamos siempre para no revelar si el correo existe
             setStep("pin");
         } catch (err) {
-            alert("Error de conexión");
+            setError("Error de conexión. Inténtalo de nuevo.");
         }
         setIsLoading(false);
+    };
+
+    const handleVerifyPin = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+        setStep("password");
     };
 
     const handleVerifyAndReset = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        setError("");
 
         try {
-            // Buscamos el negocio
-            const { data, error } = await supabase
-                .from('businesses')
-                .select('id, description')
-                .ilike('email', email.trim())
-                .limit(1)
-                .maybeSingle();
+            // Verificar PIN y actualizar contraseña en el servidor (seguro, bypasa RLS)
+            const res = await fetch('/api/reset-key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, pin, newPassword })
+            });
+            const data = await res.json();
 
-            if (!data) {
-                alert("❌ PIN inválido o caducado.");
+            if (!res.ok) {
+                setError(data.error || "PIN inválido o caducado.");
                 setIsLoading(false);
                 return;
             }
 
-            // Validar PIN
-            let sysAuth: any = {};
-            const sysAuthMatch = data.description?.match(/---SYS_AUTH---\n(.*)/);
-            if (sysAuthMatch) {
-                try { sysAuth = JSON.parse(sysAuthMatch[1].trim()); } catch(e) {}
-            }
-
-            if (!sysAuth.recoveryPin || sysAuth.recoveryPin !== pin || !sysAuth.recoveryExp || Date.now() > sysAuth.recoveryExp) {
-                alert("❌ PIN inválido o caducado.");
-                setIsLoading(false);
-                return;
-            }
-
-            // Establecer nueva contraseña
-            sysAuth.pwd = newPassword.trim();
-            delete sysAuth.recoveryPin;
-            delete sysAuth.recoveryExp;
-
-            const cleanDesc = (data.description || "").replace(/\n*---SYS_AUTH---\n.*/g, "").trim();
-            const newDesc = `${cleanDesc}\n\n---SYS_AUTH---\n${JSON.stringify(sysAuth)}`;
-
-            await supabase.from('businesses').update({ description: newDesc }).eq('id', data.id);
-            
             alert("✨ Contraseña actualizada correctamente. Redirigiendo al Login...");
             window.location.href = "/login";
 
         } catch (err) {
             console.error(err);
-            alert("Error al restablecer contraseña.");
+            setError("Error de conexión al restablecer contraseña.");
         }
         setIsLoading(false);
     };
@@ -104,6 +102,14 @@ function RecoverContent() {
                 </div>
 
                 <div className="p-12 space-y-8">
+                    {/* Error Message */}
+                    {error && (
+                        <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded p-4 text-sm text-red-700">
+                            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                            <span>{error}</span>
+                        </div>
+                    )}
+
                     {step === "email" && (
                         <form onSubmit={handleSendPin} className="space-y-6 animate-in fade-in">
                             <div className="text-center space-y-2">
@@ -126,7 +132,7 @@ function RecoverContent() {
                     )}
 
                     {step === "pin" && (
-                        <form onSubmit={(e) => { e.preventDefault(); setStep("password"); }} className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                        <form onSubmit={handleVerifyPin} className="space-y-6 animate-in fade-in slide-in-from-right-4">
                             <div className="text-center space-y-2">
                                 <h2 className="text-2xl font-serif text-navy">Verificación</h2>
                                 <p className="text-slate text-sm italic">Revisa la bandeja de entrada de {email}.</p>
@@ -144,6 +150,13 @@ function RecoverContent() {
                                 />
                             </div>
                             <Button className="w-full">Validar PIN</Button>
+                            <button
+                                type="button"
+                                className="w-full text-center text-sm text-slate hover:text-navy transition-colors"
+                                onClick={() => { setStep("email"); setError(""); }}
+                            >
+                                ← Volver a pedir el PIN
+                            </button>
                         </form>
                     )}
 

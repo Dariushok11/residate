@@ -34,7 +34,7 @@ export async function POST(req: Request) {
         const expiration = Date.now() + 15 * 60 * 1000; // 15 mins
 
         // 3. Extraer el bloque auth existente o crearlo
-        let sysAuth = {};
+        let sysAuth: any = {};
         const sysAuthMatch = business.description?.match(/---SYS_AUTH---\n(.*)/);
         if (sysAuthMatch) {
             try {
